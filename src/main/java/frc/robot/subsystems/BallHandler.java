@@ -4,26 +4,29 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class BallHandler extends SubsystemBase {
+
   /** Creates a new BallHandler. */
   public BallHandler() {}
-/** needs to extend(intake bar)
- * do we need to retract?
+/** 
+ * needs to extend (intake bar)
  * stop and start intake bar (spinning)
  * intake bar needs to spin in both directions (avoid jams)
  * start and stop lower wheels involved with intake/storage
  * need transit motors and control in both directions
- * Reverse for getting rid of ball?(what has to be reversed)
- * trap door for extake?
- * how many motors do we need at transit section?
+ * Reverse for getting rid of ball(what has to be reversed)
+ * 1 Neo motor for intake only -Spark = controller
+ * 1 Neo motors for transit (intake)
+ * 2 pistons to bring intake up and down
+ * Retractable intake bar
+ * QUESTIONS:
  * How independent are the motors?
- * Retract intake bar during match or climbing?
- * 
  */
+
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
   }
 }

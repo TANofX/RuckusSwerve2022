@@ -5,18 +5,50 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
-  public Shooter() {}
+  public Shooter() {
+    shooterMotor = new WPI_TalonFX(0);
+    //to do: get correct can ID
+  }
 /** change angles of shooter?
  * Does shooter wheels have the same speed or is it different?
  * Is the shooter folded in like the intake is? (will it interfere with climber)
  * How do we get ball up the shooter?
+ * Falcon motor for shooter
 
  */
+private WPI_TalonFX shooterMotor;
+
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+  
+  }
+
+  public void startShooter() {
+
+  }
+
+  public void stopShooter() {
+
+  }
+  public boolean correctSpeed() {
+    return false;
+    
+
   }
 }
