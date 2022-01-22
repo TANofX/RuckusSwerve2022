@@ -22,6 +22,19 @@ public class Shooter extends SubsystemBase {
   public Shooter() {
     shooterMotor = new WPI_TalonFX(0);
     //to do: get correct can ID
+    shooterMotor.setNeutralMode(NeutralMode.Coast);
+    shooterMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, Constants.SHOOTER_CURRENT_LIMIT, Constants.SHOOTER_THRESHOLD_CURRENT, Constants.SHOOTER_THRESHOLD_TIMEOUT));
+
+    shooterMotor.selectProfileSlot(0,0);
+
+    shooterMotor.config_kF(0, Constants.SHOOTER_F, 0);
+    shooterMotor.config_kP(0, Constants.SHOOTER_P, 0);
+    shooterMotor.config_kI(0, Constants.SHOOTER_I, 0);
+
+    shooterMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0,0);
+
+    shooterMotor.setSelectedSensorPosition(0);
+
   }
 /** change angles of shooter?
  * Does shooter wheels have the same speed or is it different?
@@ -30,7 +43,12 @@ public class Shooter extends SubsystemBase {
  * Falcon motor for shooter
 
  */
+
 private WPI_TalonFX shooterMotor;
+private ShooterSpeeds targetShooterSpeeds = ShooterSpeeds.OFF;
+
+
+
 
 
   @Override
@@ -39,16 +57,28 @@ private WPI_TalonFX shooterMotor;
   
   }
 
-  public void startShooter() {
+  public void startShooter(ShooterSpeeds SpeedToShoot) {
+    shooterMotor.set(ControlMode.Velocity, SpeedToShoot.getMotorSpeed());
+    targetShooterSpeeds = SpeedToShoot;
 
+    
   }
 
   public void stopShooter() {
+    shooterMotor.set(ControlMode.PercentOutput, 0);
 
   }
+
+  public double getShooterSpeed() {
+    return shooterMotor.getSelectedSensorVelocity(0);
+  }
+
   public boolean correctSpeed() {
-    return false;
-    
+  
+   if(Math.abs(targetShooterSpeeds.getMotorSpeed() - getShooterSpeed()) < Constants.SHOOTER_SPIN_ERROR) {
+     return true;
+   }
+  return false; 
 
   }
 }

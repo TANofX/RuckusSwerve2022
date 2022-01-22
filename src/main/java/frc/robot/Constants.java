@@ -12,4 +12,13 @@ package frc.robot;
  * <p>It is advised to statically import this class (or one of its inner classes) wherever the
  * constants are needed, to reduce verbosity.
  */
-public final class Constants {}
+public final class Constants {
+
+    public static final int SHOOTER_CURRENT_LIMIT = 39;
+    public static final int SHOOTER_THRESHOLD_CURRENT = 60;
+    public static final double SHOOTER_THRESHOLD_TIMEOUT = 0.01;
+    public static final double SHOOTER_F = 0.05;
+    public static final double SHOOTER_P = 0.5;
+    public static final double SHOOTER_I = 0.6;
+    public static final double SHOOTER_SPEED = 0.9;
+    public static final double SHOOTER_SPIN_ERROR = 0.2;}
