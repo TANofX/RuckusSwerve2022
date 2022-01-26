@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.spi.CurrencyNameProvider;
+
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
@@ -11,6 +13,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -39,8 +42,15 @@ public class Climber extends SubsystemBase {
       private DigitalInput rachelLeftBarSensor;
       private DigitalInput rachelRightBarSensor;
 
+      public static enum ClimberState {
+            UNKNOWN, STARTING_CONFIG, REACHING, BABYS_FIRST_REACH, BABYS_FIRST_PULL_UP, SUCESSFUL_PULL_UP, SUCESSFUL_HANG, RELEASE_REACH, T_REX_REACH, STEGOSAURUS_REACHING, BRONTOSAURUS_REACHING, REACH_PULL, REACH_SEARCHING, REACH_CATCH, REACH_CAUGHT, TRUST_FALL
+      }
+
+      private ClimberState currentState;
 
   public Climber() {
+
+
 
       leftRachelFalcon = new WPI_TalonFX(Constants.LEFT_RACHEL_FALCON);
       rightRachelFalcon = new WPI_TalonFX(Constants.RIGHT_RACHEL_FALCON);
@@ -70,17 +80,30 @@ public class Climber extends SubsystemBase {
                  if(leftRachelFalcon.get() == -1){ /*Retracting to Gabe position*/
                         //trust fall State
                         //Babys first Pull Up State
+                        currentState = ClimberState.BABYS_FIRST_PULL_UP;
                  }
                  else /*leftReachelFalcon.get() == 0 or == 1*/ {
-                       //Sucessful Pull up State  - Rachel is at Gabe position
+                       if (leftRachelFalcon.getSelectedSensorPosition() == Constants.GABE_HEIGHT_POSITION) {
+                              //Sucessful Pull up State  - Rachel is at Gabe position
+                              currentState = ClimberState.SUCESSFUL_PULL_UP;
+                       }
+                       else if (leftRachelFalcon.getSelectedSensorPosition() == Constants.REACH_CATCH_EXTENTION_HEIGHT)  {
+                             currentState = ClimberState.TRUST_FALL;
+                       }
+                       else {
+                             currentState = ClimberState.UNKNOWN;
+                       }
+                  
                  }
             }
             else /*gabeLeftIdentification.get() == false*/ {
                   if(leftRachelFalcon.getSensorCollection().isFwdLimitSwitchClosed() == 1) /*High Limit Switch triggered*/ {
                         //Babys First Reach State  - Fully extended position
+                        currentState = ClimberState.BABYS_FIRST_REACH;
                   }
                   else /*leftRachelFalcon.getSensorCollection().isFwdLimitSwitchClosed() == 0 High Limit Switch not triggered*/ {
                         //Reaching State  
+                        currentState = ClimberState.REACHING;
                   }
             }
       }
@@ -90,13 +113,16 @@ public class Climber extends SubsystemBase {
                   if(rachelLeftReach.get() == true) {
                         if(isRachelLeftMoving() == 1)  {
                               //Stegosaurus Reaching State
+                              currentState = ClimberState.STEGOSAURUS_REACHING;
                         }
                         else /*leftRachelFalcon.getSensorCollection().isFwdLimitSwitchClosed() == 0) /*High Limit Switch not triggered*/ {
                              if(leftRachelFalcon.getSelectedSensorPosition() == Constants.FULLY_EXTENDED_HEIGHT)  /*Rachel is extending*/ {
                                     //Brontosaurus Reaching State   - ***At Fully Extended State***
+                                    currentState = ClimberState.BRONTOSAURUS_REACHING;
                              }
-                             else /**/ {
+                             else {
                                    //T Rex Reach Branch
+                                   currentState = ClimberState.T_REX_REACH;
                              }
                         }
                   }
@@ -105,30 +131,40 @@ public class Climber extends SubsystemBase {
                               if(isRachelLeftMoving() == 0) {
                                    if(leftRachelFalcon.getSelectedSensorPosition() == Constants.GABE_HEIGHT_POSITION) {
                                           //succesful hang state
+                                          currentState = ClimberState.SUCESSFUL_HANG;
                                    }
                                    else if(leftRachelFalcon.getSelectedSensorPosition() == Constants.REACH_CATCH_EXTENTION_HEIGHT) {
                                          //Reach Caught State
+                                         currentState = ClimberState.REACH_CAUGHT;
+                                   }
+                                   else {
+                                         currentState = ClimberState.UNKNOWN;
                                    }
                               }
                               else /*(isRachelLeftMoving() == -1)*/ {
                                     //Reach Catch State
+                                    currentState = ClimberState.REACH_CATCH;
                               }
                         }
                         else /*rachelLeftBarSensor.get() == false*/ {
                               if(leftRachelFalcon.getSelectedSensorPosition() == 0) {
                                     //Reach Pull State
+                                    currentState = ClimberState.REACH_PULL;
                               }
                               else if(leftRachelFalcon.getSelectedSensorPosition() == 1) /*extending*/ {
                                     //Release Reach State
+                                    currentState = ClimberState.RELEASE_REACH;
                               }
                               else /*leftRachelFalcon.getSelectedSensorPosition() == -1)*/ {
                                     //Reach Searching State    - Fully extended position
+                                    currentState = ClimberState.REACH_SEARCHING;
                               }
                         }
                   }
             }
             else /*gabeLeftIdentification.get() == false*/ {
                  //Starting Config State  - fully retracted State
+                 currentState = ClimberState.STARTING_CONFIG;
             }
       }
   }
@@ -144,10 +180,16 @@ public class Climber extends SubsystemBase {
             return -1;  //retracting
       }
 }
+
+public ClimberState getCurrentState() {
+      return currentState;
+}
      
 
   @Override
   public void periodic() {
+        stateMachine();
+        SmartDashboard.putString("CurrentState", getCurrentState().name());
     // This method will be called once per scheduler run
   }
 }
