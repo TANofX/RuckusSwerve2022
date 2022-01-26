@@ -19,7 +19,7 @@ import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
-  public Shooter() {
+  private Shooter() {
     shooterMotor = new WPI_TalonFX(0);
     //to do: get correct can ID
     shooterMotor.setNeutralMode(NeutralMode.Coast);
@@ -46,6 +46,7 @@ public class Shooter extends SubsystemBase {
 
 private WPI_TalonFX shooterMotor;
 private ShooterSpeeds targetShooterSpeeds = ShooterSpeeds.OFF;
+private static Shooter shooterInstance;
 
 
 
@@ -60,12 +61,14 @@ private ShooterSpeeds targetShooterSpeeds = ShooterSpeeds.OFF;
   public void startShooter(ShooterSpeeds SpeedToShoot) {
     shooterMotor.set(ControlMode.Velocity, SpeedToShoot.getMotorSpeed());
     targetShooterSpeeds = SpeedToShoot;
+   
 
     
   }
 
   public void stopShooter() {
     shooterMotor.set(ControlMode.PercentOutput, 0);
+    targetShooterSpeeds = ShooterSpeeds.OFF;
 
   }
 
@@ -78,7 +81,19 @@ private ShooterSpeeds targetShooterSpeeds = ShooterSpeeds.OFF;
    if(Math.abs(targetShooterSpeeds.getMotorSpeed() - getShooterSpeed()) < Constants.SHOOTER_SPIN_ERROR) {
      return true;
    }
+  
   return false; 
 
+  }
+  public ShooterSpeeds getTargetSpeed() {
+    return targetShooterSpeeds;
+
+  
+  }
+  public static Shooter getInstance() {
+    if(shooterInstance == null) {
+      shooterInstance = new Shooter();
+    }
+    return shooterInstance;
   }
 }

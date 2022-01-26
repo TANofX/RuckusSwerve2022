@@ -21,4 +21,5 @@ public final class Constants {
     public static final double SHOOTER_P = 0.5;
     public static final double SHOOTER_I = 0.6;
     public static final double SHOOTER_SPEED = 0.9;
-    public static final double SHOOTER_SPIN_ERROR = 0.2;}
+    public static final double SHOOTER_SPIN_ERROR = 0.2;
+    public static final int XBOX_PORT = 0;}
