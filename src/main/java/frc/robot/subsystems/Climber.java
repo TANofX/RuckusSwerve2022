@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import java.util.concurrent.RunnableScheduledFuture;
 import java.util.spi.CurrencyNameProvider;
 
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -46,6 +47,53 @@ public class Climber extends SubsystemBase {
             UNKNOWN, STARTING_CONFIG, REACHING, BABYS_FIRST_REACH, BABYS_FIRST_PULL_UP, SUCESSFUL_PULL_UP, SUCESSFUL_HANG, RELEASE_REACH, T_REX_REACH, STEGOSAURUS_REACHING, BRONTOSAURUS_REACHING, REACH_PULL, REACH_SEARCHING, REACH_CATCH, REACH_CAUGHT, TRUST_FALL
       }
 
+      private static enum GabeStates {
+            UNKNOWN,
+            OPEN,
+            CLOSED_WITH_BAR,
+            CLOSED_WITHOUT_BAR
+      }
+
+      // None of the "expectecPosition" values are correct. They will need to be determined experimentally
+      private static enum RachelExtensionStates {
+            FULLY_RETRACTED(0),
+            GABE_HEIGHT(1000),
+            FULLY_EXTENDED(6000),
+            EXPECTED_CATCH_LOCATION(5000),
+            REACH_EXTENSION(5500),
+            FIRST_REACH_EXTENSION(4500),
+            UNKNOWN(-100000),
+            EXTENDING(-100001),
+            RETRACTING(-100002);
+
+            private double expectedPosition;
+            private static double allowedPositionError = 10.0;
+
+            private RachelExtensionStates(double encoderPosition) {
+                  expectedPosition = encoderPosition;
+            }
+
+            private double getMotorTarget() {
+                  return expectedPosition;
+            }
+
+            private static RachelExtensionStates findState(double position) {
+                  for (RachelExtensionStates s: RachelExtensionStates.values()) {
+                        if (Math.abs(s.getMotorTarget() - position) < allowedPositionError) {
+                              return s;
+                        }
+                  }
+
+                  return UNKNOWN;
+            }
+      }
+
+      private static enum RachelBarStates {
+            UNKNOWN,
+            NO_BAR,
+            BAR_CONTACT
+      }
+
       private ClimberState currentState;
 
   public Climber() {
@@ -72,6 +120,49 @@ public class Climber extends SubsystemBase {
       rachelLeftBarSensor = new DigitalInput(Constants.RACHEL_LEFT_BAR_SENSOR);
       rachelRightBarSensor = new DigitalInput(Constants.RACHEL_RIGHT_BAR_SENSOR);
 
+  }
+
+  private RachelBarStates getRachelBarState() {
+        if (rachelLeftBarSensor.get() && rachelRightBarSensor.get()) {
+              return RachelBarStates.BAR_CONTACT;
+        } else if (!rachelLeftBarSensor.get() && !rachelRightBarSensor.get()) {
+              return RachelBarStates.NO_BAR;
+        }
+
+        return RachelBarStates.UNKNOWN;
+  }
+
+  private GabeStates getGabeState() {
+        if (gabeLeftClaw.get() && gabeRightClaw.get()) {
+            if (gabeLeftIdentification.get() && gabeRightIndentification.get()) {
+                  return GabeStates.CLOSED_WITH_BAR;
+            } else if (!gabeLeftIdentification.get() && !gabeRightIndentification.get()) {
+                  return GabeStates.CLOSED_WITHOUT_BAR;
+            }
+        } else if (!gabeLeftClaw.get() && !gabeRightClaw.get()) {
+              return GabeStates.OPEN;
+        }
+
+        return GabeStates.UNKNOWN;
+  }
+
+  private RachelExtensionStates getExtensionState() {
+        double currentVelocity = leftRachelFalcon.getSelectedSensorVelocity();
+        double currentPosition = leftRachelFalcon.getSelectedSensorPosition();
+
+        double extensionState = Math.signum(currentVelocity);
+
+      // Check to see if the arms are moving and return just a movement direction
+      if (Math.abs(currentVelocity) > 10.0) { 
+            if (extensionState > 0) {
+                  return RachelExtensionStates.EXTENDING;
+            } else if (extensionState < 0) {
+                  return RachelExtensionStates.RETRACTING;
+            }
+      }
+
+      // Assume we are at a target position, because our velocity is small
+      return RachelExtensionStates.findState(currentPosition);
   }
 
   public void stateMachine() {
