@@ -24,7 +24,7 @@ public class Climber extends SubsystemBase {
       private WPI_TalonFX rightRachelFalcon;
       
       //passed through motors so we can read them through there
-      //Up and Down limits for the extending bars.  These will only be used to calibrate and as a fail safe if code tells them to go past their point of no return
+      //Up and Down limits for the extending bars.  These will only be used to calibrate and as a fail safe if code tells them to go past their physical limits
       private DigitalInput rachelUpLeftLimit;
       private DigitalInput rachelDownLeftLimit;
       private DigitalInput rachelUpRightLimit;
@@ -43,7 +43,22 @@ public class Climber extends SubsystemBase {
       private DigitalInput rachelRightBarSensor;
 
       public static enum ClimberState {
-            UNKNOWN, STARTING_CONFIG, REACHING, BABYS_FIRST_REACH, BABYS_FIRST_PULL_UP, SUCESSFUL_PULL_UP, SUCESSFUL_HANG, RELEASE_REACH, T_REX_REACH, STEGOSAURUS_REACHING, BRONTOSAURUS_REACHING, REACH_PULL, REACH_SEARCHING, REACH_CATCH, REACH_CAUGHT, TRUST_FALL
+            UNKNOWN, 
+            STARTING_CONFIG, 
+            REACHING, 
+            BABYS_FIRST_REACH, 
+            BABYS_FIRST_PULL_UP, 
+            SUCESSFUL_PULL_UP, 
+            SUCESSFUL_HANG, 
+            RELEASE_REACH, 
+            T_REX_REACH, 
+            STEGOSAURUS_REACHING,
+            BRONTOSAURUS_REACHING, 
+            REACH_PULL, 
+            REACH_SEARCHING, 
+            REACH_CATCH, 
+            REACH_CAUGHT, 
+            TRUST_FALL
       }
 
       private ClimberState currentState;
@@ -61,7 +76,6 @@ public class Climber extends SubsystemBase {
       rachelUpRightLimit = new DigitalInput(Constants.RACHEL_UP_RIGHT_LIMIT);
       rachelDownRightLimit = new DigitalInput(Constants.RACHEL_DOWN_RIGHT_LIMIT);
 
-      //What should the pneumatics module type be? 
       gabeLeftClaw = new Solenoid(PneumaticsModuleType.CTREPCM, Constants.GABE_LEFT_CLAW);
       gabeRightClaw = new Solenoid(PneumaticsModuleType.CTREPCM,Constants.GABE_RIGHT_CLAW);
       rachelLeftReach = new Solenoid(PneumaticsModuleType.CTREPCM,Constants.RACHEL_LEFT_REACH);
