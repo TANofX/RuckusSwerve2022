@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -22,12 +23,12 @@ import frc.commands.StopShooter;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private XboxController xbox = new XboxController(Constants.XBOX_PORT);
-  private JoystickButton stopShooterButton = new JoystickButton(xbox, XboxController.Button.kA.value);
-  private JoystickButton lowGoalShootButton = new JoystickButton(xbox, XboxController.Button.kB.value);
-  private JoystickButton closeHighGoalButton = new JoystickButton(xbox, XboxController.Button.kX.value);
-  private JoystickButton farHighGoalButton = new JoystickButton(xbox, XboxController.Button.kY.value);
-  private JoystickButton launchpadGoalShoot = new JoystickButton(xbox, XboxController.Button.kLeftBumper.value);
+  private Joystick joystick1 = new Joystick(Constants.JOYSTICK1_PORT);
+  private JoystickButton stopShooterButton = new JoystickButton(joystick1, 5);
+  private JoystickButton lowGoalShootButton = new JoystickButton(joystick1, 1);
+  private JoystickButton closeHighGoalButton = new JoystickButton(joystick1, 2);
+  private JoystickButton farHighGoalButton = new JoystickButton(joystick1, 3);
+  private JoystickButton launchpadGoalShoot = new JoystickButton(joystick1, 4);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {

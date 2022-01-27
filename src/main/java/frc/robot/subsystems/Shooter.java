@@ -55,7 +55,7 @@ private static Shooter shooterInstance;
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-  
+  SmartDashboard.putString("currenttarget", targetShooterSpeeds.name());
   }
 
   public void startShooter(ShooterSpeeds SpeedToShoot) {
