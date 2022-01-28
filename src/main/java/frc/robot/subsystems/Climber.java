@@ -75,6 +75,7 @@ public class Climber extends SubsystemBase {
             GABE_HEIGHT(1000),
             FULLY_EXTENDED(6000),
             EXPECTED_CATCH_LOCATION(5000),
+            RELEASE_REACH(1300),
             REACH_EXTENSION(5500),
             FIRST_REACH_EXTENSION(4500),
             UNKNOWN(-100000),
@@ -105,8 +106,10 @@ public class Climber extends SubsystemBase {
 
       private static enum RachelBarStates {
             UNKNOWN,
-            NO_BAR,
-            BAR_CONTACT
+            REACHING_NO_BAR,
+            REACHING_BAR_CONTACT,
+            NOT_REACHING_NO_BAR,
+            NOT_REACHING_BAR_CONTACT
       }
 
       private ClimberState currentState;
@@ -138,9 +141,20 @@ public class Climber extends SubsystemBase {
 
   private RachelBarStates getRachelBarState() {
         if (rachelLeftBarSensor.get() && rachelRightBarSensor.get()) {
-              return RachelBarStates.BAR_CONTACT;
+              if(rachelLeftReach.get() && rachelRightReach.get()) {
+                    return RachelBarStates.REACHING_BAR_CONTACT;
+              }
+              else if(!rachelLeftReach.get() && !rachelRightReach.get()) {
+                    return RachelBarStates.NOT_REACHING_BAR_CONTACT;
+              }
         } else if (!rachelLeftBarSensor.get() && !rachelRightBarSensor.get()) {
-              return RachelBarStates.NO_BAR;
+              if(rachelLeftReach.get() && rachelRightReach.get()) {
+                    return RachelBarStates.REACHING_NO_BAR;
+              }
+              else if(!rachelLeftReach.get() && !rachelRightReach.get()) {
+                    return RachelBarStates.NOT_REACHING_NO_BAR;
+              }
+            
         }
 
         return RachelBarStates.UNKNOWN;
@@ -177,6 +191,63 @@ public class Climber extends SubsystemBase {
 
       // Assume we are at a target position, because our velocity is small
       return RachelExtensionStates.findState(currentPosition);
+  }
+
+  public void stateMachineTwo() {
+      GabeStates currentGabe = getGabeState();
+      RachelExtensionStates currentRachelExt = getExtensionState();
+      RachelBarStates currentRachelBar = getRachelBarState();
+
+      switch (currentGabe) {
+            case OPEN: 
+                  switch (currentRachelExt) {
+                        case EXTENDING:
+                              break;
+                        case RETRACTING:
+                              break;
+                        case FULLY_EXTENDED:
+                              break;
+                        case GABE_HEIGHT:
+                              break;
+                        case FIRST_REACH_EXTENSION:
+                              break;
+                        default:
+                  }
+                  break;
+            case CLOSED_WITH_BAR:
+                  switch (currentRachelExt) {
+                        case EXTENDING:
+                              break;
+                        case RETRACTING:
+                              break;
+                        case GABE_HEIGHT:
+                              break;
+                        case RELEASE_REACH:
+                              break;
+                        case REACH_EXTENSION:
+                              break;
+                        default:
+                  }
+                 break;
+            case CLOSED_WITHOUT_BAR:
+                  switch (currentRachelBar) {
+                        case NOT_REACHING_NO_BAR:
+                              switch (currentRachelExt) {
+                                    case FULLY_RETRACTED:
+                                    currentState = ClimberState.STARTING_CONFIG;
+                              break;
+                              default:
+                              }
+
+                        break;
+                        default:
+                  }      
+
+            break;
+            default:
+      }
+
+
   }
 
   public void stateMachine() {
@@ -294,7 +365,10 @@ public ClimberState getCurrentState() {
   @Override
   public void periodic() {
         stateMachine();
-        SmartDashboard.putString("CurrentState", getCurrentState().name());
+        SmartDashboard.putString("Current State", getCurrentState().name());
+        SmartDashboard.putString("Rachel Bar State", getRachelBarState().name());
+        SmartDashboard.putString("Gabe Bar State", getGabeState().name());
+        SmartDashboard.putString("Rachel Extention State", getExtensionState().name());
     // This method will be called once per scheduler run
   }
 }
