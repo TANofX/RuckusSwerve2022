@@ -14,6 +14,7 @@ import frc.commands.FarHighGoalShoot;
 import frc.commands.LaunchpadGoalShoot;
 import frc.commands.LowGoalShoot;
 import frc.commands.StopShooter;
+import frc.robot.subsystems.BallHandler;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -33,6 +34,8 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
+    BallHandler.getInstance();
+    
     configureButtonBindings();
   }
 
