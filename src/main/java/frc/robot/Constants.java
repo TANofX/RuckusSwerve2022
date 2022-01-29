@@ -43,4 +43,10 @@ public final class Constants {
 
     public static int CLIMB_HEIGHT_THRESHOLD = 1;
 
+    //BUTTON INPUTS FOR FLIGHT STICK CONTROLLER
+    public static int STICK = 1;
+
+    public static int GABE_PNEUMATICS_BUTTON = 1;
+    public static int RACHEL_REACH_PNEUMATICS_BUTTON = 2;
+
 }

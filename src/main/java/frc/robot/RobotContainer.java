@@ -4,9 +4,13 @@
 
 package frc.robot;
 
+import commands.ToggleGabeClaw;
+import commands.ToggleRachelReach;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Climber;
 
 /**
@@ -17,10 +21,14 @@ import frc.robot.subsystems.Climber;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
+  final Joystick m_stick = new Joystick(Constants.STICK);
 
-  private Climber climber = new Climber();
+  final JoystickButton toggleGabe = new JoystickButton(m_stick, Constants.GABE_PNEUMATICS_BUTTON);
+  final JoystickButton toggleRachel = new JoystickButton(m_stick, Constants.RACHEL_REACH_PNEUMATICS_BUTTON);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    Climber.getInstance();
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -32,7 +40,9 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    
+    toggleGabe.whenPressed(new ToggleGabeClaw());
+    toggleRachel.whenPressed(new ToggleRachelReach());
+
   }
 
   /**
