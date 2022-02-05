@@ -18,6 +18,7 @@ public final class Constants {
 
     //  CLIMBER SUBSYSTEM CONSTANTS
 
+    
     public static int RACHEL_UP_LEFT_LIMIT = 0;
     public static int RACHEL_UP_RIGHT_LIMIT = 1;
     public static int RACHEL_DOWN_LEFT_LIMIT = 2;
@@ -49,4 +50,7 @@ public final class Constants {
     public static int GABE_PNEUMATICS_BUTTON = 1;
     public static int RACHEL_REACH_PNEUMATICS_BUTTON = 2;
 
+    public static double CLIMBER_MAX_VELOCITY = 500; 
+    public static int LOCK_RACHEL_MOVE_JOYSTICK = 4;
+    public static int MOVE_RACHEL_AXIS = 0;
 }

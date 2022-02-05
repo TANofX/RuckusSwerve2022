@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import commands.MoveRachelWithJoystick;
 import commands.ToggleGabeClaw;
 import commands.ToggleRachelReach;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -25,6 +26,8 @@ public class RobotContainer {
 
   final JoystickButton toggleGabe = new JoystickButton(m_stick, Constants.GABE_PNEUMATICS_BUTTON);
   final JoystickButton toggleRachel = new JoystickButton(m_stick, Constants.RACHEL_REACH_PNEUMATICS_BUTTON);
+
+  final JoystickButton lockRachelMoveJoystick = new JoystickButton(m_stick, Constants.LOCK_RACHEL_MOVE_JOYSTICK);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     Climber.getInstance();
@@ -42,6 +45,9 @@ public class RobotContainer {
   private void configureButtonBindings() {
     toggleGabe.whenPressed(new ToggleGabeClaw());
     toggleRachel.whenPressed(new ToggleRachelReach());
+
+    lockRachelMoveJoystick.whileHeld(new MoveRachelWithJoystick(Climber.getInstance(), m_stick));
+    
 
   }
 

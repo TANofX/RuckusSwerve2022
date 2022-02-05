@@ -4,9 +4,15 @@
 
 package frc.robot.subsystems;
 
+import java.util.ResourceBundle.Control;
 import java.util.concurrent.RunnableScheduledFuture;
 import java.util.spi.CurrencyNameProvider;
 
+import javax.net.ssl.TrustManagerFactorySpi;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.SensorCollection;
+import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
@@ -27,11 +33,9 @@ public class Climber extends SubsystemBase {
       // passed through motors so we can read them through there
       // Up and Down limits for the extending bars. These will only be used to
       // calibrate and as a fail safe if code tells them to go past their physical
-      // limits
-      private DigitalInput rachelUpLeftLimit;
-      private DigitalInput rachelDownLeftLimit;
-      private DigitalInput rachelUpRightLimit;
-      private DigitalInput rachelDownRightLimit;
+      // limits\
+      private TalonFXSensorCollection rachelLeftCollection;
+      private TalonFXSensorCollection rachelRightCollection;
 
       // Pistons for Gabe's active claw and Rachel's Reach function
       private Solenoid gabeLeftClaw;
@@ -134,10 +138,8 @@ public class Climber extends SubsystemBase {
             rightRachelFalcon = new WPI_TalonFX(Constants.RIGHT_RACHEL_FALCON);
             // talon.getSensorCollection().isRevLimitSwitchClosed() == 1=closed and 0=open
 
-            rachelUpLeftLimit = new DigitalInput(Constants.RACHEL_UP_LEFT_LIMIT);
-            rachelDownLeftLimit = new DigitalInput(Constants.RACHEL_DOWN_LEFT_LIMIT);
-            rachelUpRightLimit = new DigitalInput(Constants.RACHEL_UP_RIGHT_LIMIT);
-            rachelDownRightLimit = new DigitalInput(Constants.RACHEL_DOWN_RIGHT_LIMIT);
+            rachelRightCollection = rightRachelFalcon.getSensorCollection();
+            rachelLeftCollection = leftRachelFalcon.getSensorCollection();
 
             gabeLeftClaw = new Solenoid(PneumaticsModuleType.CTREPCM, Constants.GABE_LEFT_CLAW);
             gabeRightClaw = new Solenoid(PneumaticsModuleType.CTREPCM, Constants.GABE_RIGHT_CLAW);
@@ -388,7 +390,7 @@ public class Climber extends SubsystemBase {
                         case BRONTOSAURUS_REACHING:
                         case REACH_PULL:
                         case REACH_SEARCHING:
-                        gabeClawL = !gabeClawL;
+                              gabeClawL = !gabeClawL;
                               break;
                         case REACH_CATCH:
                         case REACH_CAUGHT:
@@ -408,6 +410,10 @@ public class Climber extends SubsystemBase {
             rachelRightReach.set(!rachelReachL);
       }
 
+      public void rachelNoReach() {
+            rachelLeftReach.set(false);
+            rachelRightReach.set(false);
+      }
 
       private int isRachelLeftMoving() {
             if (leftRachelFalcon.getMotorOutputPercent() == 0) {
@@ -423,6 +429,93 @@ public class Climber extends SubsystemBase {
             return currentState;
       }
 
+      public double getRachelVelocity() {
+            return (rightRachelFalcon.getSelectedSensorVelocity() + leftRachelFalcon.getSelectedSensorVelocity() / 2);
+      }
+
+      public double getRachelPosition() {
+            return (rightRachelFalcon.getSelectedSensorPosition() + leftRachelFalcon.getSelectedSensorPosition() / 2);
+      }
+
+      public void moveRachelPosition(double position) {
+            double rachelPosition = position;
+            leftRachelFalcon.set(ControlMode.Position, rachelPosition);
+            rightRachelFalcon.set(ControlMode.Position, rachelPosition);
+            SmartDashboard.putNumber("Move RAchel To Position", rachelPosition);
+      }
+
+      public void moveRachelPosition(RachelExtensionStates targetState) {
+            moveRachelPosition(targetState.getMotorTarget());
+      }
+
+      public void calibrateRachel() {
+            leftRachelFalcon.setSelectedSensorPosition(0);
+            rightRachelFalcon.setSelectedSensorPosition(0);
+      }
+
+      public void moveRachelDown() {
+            leftRachelFalcon.set(ControlMode.PercentOutput, -0.1);
+            rightRachelFalcon.set(ControlMode.PercentOutput, -0.1);
+      }
+
+      public boolean isRachelBottomLimit() {
+            if ((rachelLeftCollection.isRevLimitSwitchClosed() == 1)
+                        && (rachelRightCollection.isRevLimitSwitchClosed() == 1)) {
+                  return true;
+            }
+            return false;
+      }
+
+      public void stopRachel() {
+            leftRachelFalcon.set(ControlMode.PercentOutput, 0);
+            rightRachelFalcon.set(ControlMode.PercentOutput, 0);
+      }
+
+      // move to state look at state in and wher you want to go to. can say no or do
+      // things to get there.
+      public boolean goToTargetState(ClimberState newState) {
+            switch (currentState) {
+                  case SUCCESSFULL_HANG:
+                  case RELEASE_REACH:
+                  case REACH_PULL:
+                  case REACH_SEARCHING:
+                  case REACH_CATCH:
+                  case REACH_CAUGHT:
+                        switch (newState) {
+                              case REACHING:
+                              case BABYS_FIRST_REACH:
+                              case BABYS_FIRST_PULL_UP:
+                              case SUCCESSFULL_PULL_UP:
+                              case TRUST_FALL:
+                                    return false;
+                              default:
+                        }
+                        break;
+
+                  case T_REX_REACH:
+                  case STEGOSAURUS_REACHING:
+                  case BRONTOSAURUS_REACHING:
+                        switch (newState) {
+                              case STARTING_CONFIG:
+                              case REACHING:
+                              case BABYS_FIRST_REACH:
+                              case BABYS_FIRST_PULL_UP:
+                              case SUCCESSFULL_HANG:
+                              case SUCCESSFULL_PULL_UP:
+                              case RELEASE_REACH:
+                              case REACH_SEARCHING:
+                              case REACH_CATCH:
+                              case REACH_CAUGHT:
+                              case TRUST_FALL:
+                                    return false;
+                              default:
+                        }
+                        break;
+                  default:
+            }
+            return true;
+      }
+
       @Override
       public void periodic() {
             stateMachineTwo();
@@ -430,7 +523,12 @@ public class Climber extends SubsystemBase {
             SmartDashboard.putString("Rachel Bar State", getRachelBarState().name());
             SmartDashboard.putString("Gabe Bar State", getGabeState().name());
             SmartDashboard.putString("Rachel Extention State", getExtensionState().name());
+
             // This method will be called once per scheduler run
+      }
+
+      public double getMaxVelicity() {
+            return Constants.CLIMBER_MAX_VELOCITY;
       }
 }
 
