@@ -27,4 +27,5 @@ public final class Constants {
     public static final int HANDLERSENSOR_2_PORT = 2;
     public static final int HANDLERSENSOR_3_PORT = 3;
     public static final int HANDLERSENSOR_4_PORT = 4;
+    public static final int INTAKE_SOLENOID_PORT = 0;
 }

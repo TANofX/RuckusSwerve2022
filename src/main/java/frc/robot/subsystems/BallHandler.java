@@ -7,12 +7,13 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.commands.DefaultBallHandler;
 import frc.robot.Constants;
 import frc.robot.util.BallSensor;
 
 public class BallHandler extends SubsystemBase {
   public enum HandlerState {
-    EMPTY, 
+    EMPTY,
     ONEBALLPOSITION1,
     ONEBALLPOSITION2,
     ONEBALLPOSITION3,
@@ -22,22 +23,24 @@ public class BallHandler extends SubsystemBase {
     TWOBALLPOSITION3,
     UNKNOWN,
   }
-  
+
   /** Creates a new BallHandler. */
   private Spark transitMotor;
   private BallSensor firstSensor; // far left (near intake)
   private BallSensor secondSensor;
   private BallSensor thirdSensor;
   private BallSensor fourthSensor; // far Right(near shooter)
-  private HandlerState currentState;
+  private HandlerState currentState = HandlerState.ONEBALLPOSITION1;
   private static BallHandler handlerInstance;
+  private HandlerState targetState = HandlerState.ONEBALLPOSITION2;
 
   public BallHandler() {
-    
+
     firstSensor = new BallSensor(Constants.HANDLERSENSOR_1_PORT);
     secondSensor = new BallSensor(Constants.HANDLERSENSOR_2_PORT);
     thirdSensor = new BallSensor(Constants.HANDLERSENSOR_3_PORT);
     fourthSensor = new BallSensor(Constants.HANDLERSENSOR_4_PORT);
+    setDefaultCommand(new DefaultBallHandler());
 
   }
 
@@ -64,16 +67,8 @@ public class BallHandler extends SubsystemBase {
     SmartDashboard.putString("HandlerState", currentState.name());
   }
 
-  public void shootOneBall() {
-
-  }
-
-  public void shootAllBalls() {
-
-  }
-
-  public void moveTransitMotor() {
-    
+  public void moveTransitMotor(double velocity) {
+    transitMotor.set(velocity);
   }
 
   public void extake() {
@@ -96,7 +91,7 @@ public class BallHandler extends SubsystemBase {
     }
 
     if (thirdSensor.isTriggered()) {
-      numberOfBalls = numberOfBalls  + 1;
+      numberOfBalls = numberOfBalls + 1;
     }
 
     if (fourthSensor.isTriggered()) {
@@ -107,27 +102,56 @@ public class BallHandler extends SubsystemBase {
   }
 
   public boolean readyForIntake() {
-    if (ballsInRobot() == 0)
-      return true;
-    if (ballsInRobot() == 2)
-      return false;
-    if ((ballsInRobot() == 1) && (secondSensor.isTriggered())) {
-      return true;
+    switch (currentState) {
+      case EMPTY:
+      case ONEBALLPOSITION2:
 
+        return true;
+      default:
+        return false;
     }
-    moveBallToPosition2();
-    return false;
 
-    /*
-     * no balls in robot = true
-     * 1 ball in robot (in position 2) = true
-     * 1 ball in robot (not in position 2) = false (need to move ball to positions
-     * 2 balls in robot = false
-     */
   }
 
-  private void moveBallToPosition2() {
+  public HandlerState getState() {
+    return currentState;
+  }
 
+  public void setState(HandlerState newState) {
+    targetState = newState;
+    if (atState())
+      return;
+    switch (targetState) {
+      case ONEBALLPOSITION2:
+        switch (currentState) {
+          case ONEBALLPOSITION1:
+            moveTransitMotor(0.3);
+            break;
+          case ONEBALLPOSITION3:
+          case ONEBALLPOSITION4:
+            moveTransitMotor(-0.3);
+            break;
+          default:
+
+        }
+      case TWOBALLPOSITION3:
+
+        switch (currentState) {
+          case TWOBALLPOSITION1:
+          case TWOBALLPOSITION2:
+            moveTransitMotor(0.3);
+            break;
+          default:
+
+        }
+
+      default:
+
+    }
+  }
+
+  public boolean atState() {
+    return (currentState == targetState);
   }
 
   private void stateMachine() {
@@ -135,37 +159,37 @@ public class BallHandler extends SubsystemBase {
       currentState = HandlerState.EMPTY;
     }
 
-    if((ballsInRobot() == 1) && (firstSensor.isTriggered())) {
+    if ((ballsInRobot() == 1) && (firstSensor.isTriggered())) {
       currentState = HandlerState.ONEBALLPOSITION1;
     }
 
-    if((ballsInRobot() == 1) && (secondSensor.isTriggered())) {
+    if ((ballsInRobot() == 1) && (secondSensor.isTriggered())) {
       currentState = HandlerState.ONEBALLPOSITION2;
     }
 
-    if((ballsInRobot() == 1) && (thirdSensor.isTriggered())) {
+    if ((ballsInRobot() == 1) && (thirdSensor.isTriggered())) {
       currentState = HandlerState.ONEBALLPOSITION3;
     }
 
-    if((ballsInRobot() == 1) && (fourthSensor.isTriggered())) {
+    if ((ballsInRobot() == 1) && (fourthSensor.isTriggered())) {
       currentState = HandlerState.ONEBALLPOSITION4;
     }
 
-    if((ballsInRobot() == 2) && (firstSensor.isTriggered()) && (secondSensor.isTriggered())) {
+    if ((ballsInRobot() == 2) && (firstSensor.isTriggered()) && (secondSensor.isTriggered())) {
       currentState = HandlerState.TWOBALLPOSITION1;
     }
 
-    if((ballsInRobot() == 2) && (secondSensor.isTriggered()) && (thirdSensor.isTriggered())) {
+    if ((ballsInRobot() == 2) && (secondSensor.isTriggered()) && (thirdSensor.isTriggered())) {
       currentState = HandlerState.TWOBALLPOSITION2;
     }
 
-    if((ballsInRobot() == 2) && (thirdSensor.isTriggered()) && (fourthSensor.isTriggered())) {
+    if ((ballsInRobot() == 2) && (thirdSensor.isTriggered()) && (fourthSensor.isTriggered())) {
       currentState = HandlerState.TWOBALLPOSITION3;
     }
   }
 
   public static BallHandler getInstance() {
-    if(handlerInstance == null) {
+    if (handlerInstance == null) {
       handlerInstance = new BallHandler();
     }
     return handlerInstance;
