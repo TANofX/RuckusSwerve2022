@@ -172,13 +172,13 @@ public class Climber extends SubsystemBase {
       }
 
       private GabeStates getGabeState() {
-            if (gabeLeftClaw.get() && gabeRightClaw.get()) {
+            if (!gabeLeftClaw.get() && !gabeRightClaw.get()) {
                   if (gabeLeftIdentification.get() && gabeRightIndentification.get()) {
                         return GabeStates.CLOSED_WITH_BAR;
                   } else if (!gabeLeftIdentification.get() && !gabeRightIndentification.get()) {
                         return GabeStates.CLOSED_WITHOUT_BAR;
                   }
-            } else if (!gabeLeftClaw.get() && !gabeRightClaw.get()) {
+            } else if (gabeLeftClaw.get() && gabeRightClaw.get()) {
                   return GabeStates.OPEN;
             }
 
@@ -404,6 +404,16 @@ public class Climber extends SubsystemBase {
 
       }
 
+      public void gabeOpen() {
+            gabeLeftClaw.set(true);
+            gabeRightClaw.set(true);
+      }
+
+      public void gabeClosed() {
+            gabeLeftClaw.set(false);
+            gabeRightClaw.set(false);
+      }
+
       public void toggleRachel() {
             boolean rachelReachL = rachelLeftReach.get();
             rachelLeftReach.set(!rachelReachL);
@@ -415,14 +425,9 @@ public class Climber extends SubsystemBase {
             rachelRightReach.set(false);
       }
 
-      private int isRachelLeftMoving() {
-            if (leftRachelFalcon.getMotorOutputPercent() == 0) {
-                  return 0;
-            } else if (leftRachelFalcon.getMotorOutputPercent() > 0) {
-                  return 1; // extending
-            } else {
-                  return -1; // retracting
-            }
+      public void rachelReach() {
+            rachelLeftReach.set(true);
+            rachelRightReach.set(true);
       }
 
       public ClimberState getCurrentState() {
@@ -441,7 +446,7 @@ public class Climber extends SubsystemBase {
             double rachelPosition = position;
             leftRachelFalcon.set(ControlMode.Position, rachelPosition);
             rightRachelFalcon.set(ControlMode.Position, rachelPosition);
-            SmartDashboard.putNumber("Move RAchel To Position", rachelPosition);
+            SmartDashboard.putNumber("Move Rachel To Position", rachelPosition);
       }
 
       public void moveRachelPosition(RachelExtensionStates targetState) {
@@ -480,7 +485,6 @@ public class Climber extends SubsystemBase {
                   case REACH_PULL:
                   case REACH_SEARCHING:
                   case REACH_CATCH:
-                  case REACH_CAUGHT:
                         switch (newState) {
                               case REACHING:
                               case BABYS_FIRST_REACH:
@@ -491,7 +495,16 @@ public class Climber extends SubsystemBase {
                               default:
                         }
                         break;
-
+                  case REACH_CAUGHT:
+                        switch (newState) {
+                              case REACHING:
+                              case BABYS_FIRST_REACH:
+                              case BABYS_FIRST_PULL_UP:
+                              case SUCCESSFULL_PULL_UP:
+                                    return false;
+                              default:
+                        }
+                        break;
                   case T_REX_REACH:
                   case STEGOSAURUS_REACHING:
                   case BRONTOSAURUS_REACHING:
@@ -513,6 +526,66 @@ public class Climber extends SubsystemBase {
                         break;
                   default:
             }
+            switch (newState) {
+                  case STARTING_CONFIG:
+                        moveRachelPosition(RachelExtensionStates.FULLY_RETRACTED);
+                        gabeClosed();
+                        rachelNoReach();
+                        break;
+                  case REACHING:
+                        throw new IllegalStateException();
+                  case BABYS_FIRST_REACH:
+                        moveRachelPosition(RachelExtensionStates.FIRST_REACH_EXTENSION);
+                        gabeOpen();
+                        rachelNoReach();
+                        break;
+                  case BABYS_FIRST_SEARCH:
+                  case BABYS_FIRST_PULL_UP:
+                        throw new IllegalStateException();
+                  case SUCCESSFULL_PULL_UP:
+                        moveRachelPosition(RachelExtensionStates.GABE_HEIGHT);
+                        gabeOpen();
+                        rachelNoReach();
+                        break;
+                  case SUCCESSFULL_HANG:
+                        moveRachelPosition(RachelExtensionStates.GABE_HEIGHT);
+                        gabeClosed();
+                        rachelNoReach();
+                        break;
+                  case RELEASE_REACH:
+                       throw new IllegalStateException();
+                  case T_REX_REACH:
+                        moveRachelPosition(RachelExtensionStates.RELEASE_REACH);
+                        gabeClosed();
+                        rachelReach();
+                        break;
+                  case STEGOSAURUS_REACHING:
+                        throw new IllegalStateException();
+                  case BRONTOSAURUS_REACHING:
+                        moveRachelPosition(RachelExtensionStates.REACH_EXTENSION);
+                        gabeClosed();
+                        rachelReach();
+                        break;
+                  case REACH_PULL:
+                        moveRachelPosition(RachelExtensionStates.REACH_EXTENSION);
+                        gabeClosed();
+                        rachelNoReach();
+                        break;
+                  case REACH_SEARCHING:
+                  case REACH_CATCH:
+                        throw new IllegalStateException();
+                  case REACH_CAUGHT:
+                        moveRachelPosition(RachelExtensionStates.TRUST_FALL_LOCATION);
+                        gabeClosed();
+                        rachelNoReach();
+                        break;
+                  case TRUST_FALL:
+                        moveRachelPosition(RachelExtensionStates.TRUST_FALL_LOCATION);
+                        gabeOpen();
+                        rachelNoReach();
+                        break;
+                  default:
+            }
             return true;
       }
 
@@ -523,7 +596,6 @@ public class Climber extends SubsystemBase {
             SmartDashboard.putString("Rachel Bar State", getRachelBarState().name());
             SmartDashboard.putString("Gabe Bar State", getGabeState().name());
             SmartDashboard.putString("Rachel Extention State", getExtensionState().name());
-
             // This method will be called once per scheduler run
       }
 
