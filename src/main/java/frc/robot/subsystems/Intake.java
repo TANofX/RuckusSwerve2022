@@ -23,16 +23,10 @@ public class Intake extends SubsystemBase {
   private ColorSensorV3 colorSensor;
   private Solenoid solenoid;
   private static Intake intakeInstance;
-  
-  
 
   public Intake() {
-    solenoid = new Solenoid(PneumaticsModuleType.CTREPCM,Constants.INTAKE_SOLENOID_PORT);
+    solenoid = new Solenoid(PneumaticsModuleType.CTREPCM, Constants.INTAKE_SOLENOID_PORT);
     colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
-    ColorMatch colorMatcher = new ColorMatch();
-    Color BlueTarget = ColorMatch.makeColor(0.169, 0.405, 0.426);
-    Color RedTarget = ColorMatch.makeColor(0.528, 0.347, 0.126);
-    
 
   }
 
@@ -40,17 +34,20 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     colorSensor.getProximity();
+    ColorMatch colorMatcher = new ColorMatch();
+    Color BlueTarget = ColorMatch.makeColor(0.169, 0.405, 0.426);
+    Color RedTarget = ColorMatch.makeColor(0.528, 0.347, 0.126);
+    colorMatcher.addColorMatch(BlueTarget);
+    colorMatcher.addColorMatch(RedTarget);
+    Color detectedColor = colorSensor.getColor();
     
+
   }
+
   public void runIntake() {
     solenoid.set(true);
     intakeMotor.set(0.5);
-    if (colorSensor.getProximity() >= 300 ) {
-      colorSensor.getColor();
 
-    }
-    ColorMatchResult match = colorMatcher.matchClosestColor(detectColor)
-    
   }
 
   public void stopIntake() {
