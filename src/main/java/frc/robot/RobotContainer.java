@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import commands.CalibrateClimber;
+import commands.CancelClimber;
 import commands.MoveRachelWithJoystick;
 import commands.SetClimberState;
 import commands.ToggleGabeClaw;
@@ -36,6 +38,8 @@ public class RobotContainer {
   final JoystickButton highClimb = new JoystickButton(m_stick, Constants.CLIMB_HIGH_BAR);
   final JoystickButton traversalClimb = new JoystickButton(m_stick, Constants.CLIMB_TRAVERSAL_BAR);
 
+  final JoystickButton cancelClimber = new JoystickButton(m_stick, Constants.CANCEL_CLIMBER);
+  final JoystickButton calibrateClimber = new JoystickButton(m_stick, Constants.CALIBRATE_CLIMBER);
   final JoystickButton lockRachelMoveJoystick = new JoystickButton(m_stick, Constants.LOCK_RACHEL_MOVE_JOYSTICK);
 
   /**
@@ -62,6 +66,9 @@ public class RobotContainer {
 
     highClimb.whenPressed(getHighClimbCommand());
     traversalClimb.whenPressed(getTraversalClimbCommand());
+
+    cancelClimber.whenPressed(new CancelClimber());
+    calibrateClimber.whenPressed(new CalibrateClimber());  
 
     lockRachelMoveJoystick.whileHeld(new MoveRachelWithJoystick(Climber.getInstance(), m_stick));
 

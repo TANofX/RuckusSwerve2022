@@ -458,6 +458,17 @@ public class Climber extends SubsystemBase {
             rightRachelFalcon.setSelectedSensorPosition(0);
       }
 
+      public boolean calibrateClimber() {
+            if (!isRachelBottomLimit()) {
+                  moveRachelDown();
+            }
+            else {calibrateRachel();
+            gabeClosed();
+            return true;
+            }
+            return false;
+      }
+
       public void moveRachelDown() {
             leftRachelFalcon.set(ControlMode.PercentOutput, -0.1);
             rightRachelFalcon.set(ControlMode.PercentOutput, -0.1);
@@ -476,8 +487,6 @@ public class Climber extends SubsystemBase {
             rightRachelFalcon.set(ControlMode.PercentOutput, 0);
       }
 
-      // move to state look at state in and wher you want to go to. can say no or do
-      // things to get there.
       public boolean goToTargetState(ClimberState newState) {
             switch (currentState) {
                   case SUCCESSFULL_HANG:
@@ -553,7 +562,7 @@ public class Climber extends SubsystemBase {
                         rachelNoReach();
                         break;
                   case RELEASE_REACH:
-                       throw new IllegalStateException();
+                        throw new IllegalStateException();
                   case T_REX_REACH:
                         moveRachelPosition(RachelExtensionStates.RELEASE_REACH);
                         gabeClosed();

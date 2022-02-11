@@ -49,8 +49,11 @@ public final class Constants {
     public static int GABE_PNEUMATICS_BUTTON = 1;
     public static int RACHEL_REACH_PNEUMATICS_BUTTON = 2;
 
-    public static final int CLIMB_TRAVERSAL_BAR = 8;
-    public static final int CLIMB_HIGH_BAR = 10;
+    public static  int CLIMB_TRAVERSAL_BAR = 10;
+    public static  int CLIMB_HIGH_BAR = 8;
+
+    public static  int CANCEL_CLIMBER = 11;
+    public static  int CALIBRATE_CLIMBER = 9;
 
     public static double CLIMBER_MAX_VELOCITY = 500; 
     public static int LOCK_RACHEL_MOVE_JOYSTICK = 4;
@@ -58,5 +61,6 @@ public final class Constants {
 
     //BUTTON INPUTS FOR XBOX CONTROLLER
     public static final int XBOX = 0;
+
 
 }
