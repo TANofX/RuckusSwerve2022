@@ -28,4 +28,6 @@ public final class Constants {
     public static final int HANDLERSENSOR_3_PORT = 3;
     public static final int HANDLERSENSOR_4_PORT = 4;
     public static final int INTAKE_SOLENOID_PORT = 0;
+    public static final int DETECTABLE_DISTANCE = 500;
+    public static final double REVERSE_INTAKE_TIMEOUT = 0.5;
 }

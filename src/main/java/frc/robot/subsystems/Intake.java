@@ -9,6 +9,7 @@ import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.ColorSensorV3.ProximitySensorMeasurementRate;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -23,24 +24,47 @@ public class Intake extends SubsystemBase {
   private ColorSensorV3 colorSensor;
   private Solenoid solenoid;
   private static Intake intakeInstance;
+  private ColorMatch colorMatcher = new ColorMatch();
+  private Color blueTarget = new Color(0.169, 0.405, 0.426);
+  private Color redTarget = new Color(0.528, 0.347, 0.126);
+  private Color allianceColor;
 
   public Intake() {
     solenoid = new Solenoid(PneumaticsModuleType.CTREPCM, Constants.INTAKE_SOLENOID_PORT);
     colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
+    colorMatcher.addColorMatch(blueTarget);
+    colorMatcher.addColorMatch(redTarget);
 
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    colorSensor.getProximity();
-    ColorMatch colorMatcher = new ColorMatch();
-    Color BlueTarget = ColorMatch.makeColor(0.169, 0.405, 0.426);
-    Color RedTarget = ColorMatch.makeColor(0.528, 0.347, 0.126);
-    colorMatcher.addColorMatch(BlueTarget);
-    colorMatcher.addColorMatch(RedTarget);
-    Color detectedColor = colorSensor.getColor();
-    
+
+  }
+
+  public boolean checkColor(DriverStation.Alliance ourAlliance) {
+    switch (ourAlliance) {
+      case Red:
+        allianceColor = redTarget;
+        break;
+      case Blue:
+        allianceColor = blueTarget;
+        break;
+      default:
+        allianceColor = Color.kBlack;
+    }
+
+    if (colorSensor.getProximity() >= Constants.DETECTABLE_DISTANCE) {
+      Color detectedColor = colorSensor.getColor();
+      ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
+      if (match.color == allianceColor) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return true;
 
   }
 
@@ -53,6 +77,11 @@ public class Intake extends SubsystemBase {
   public void stopIntake() {
     solenoid.set(false);
     intakeMotor.stopMotor();
+  }
+
+  public void reverseIntake() {
+    solenoid.set(true);
+    intakeMotor.set(-0.5);
   }
 
   public static Intake getInstance() {
