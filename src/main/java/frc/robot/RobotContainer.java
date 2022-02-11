@@ -68,7 +68,7 @@ public class RobotContainer {
     traversalClimb.whenPressed(getTraversalClimbCommand());
 
     cancelClimber.whenPressed(new CancelClimber());
-    calibrateClimber.whenPressed(new CalibrateClimber());  
+    calibrateClimber.whenPressed(new CalibrateClimber());
 
     lockRachelMoveJoystick.whileHeld(new MoveRachelWithJoystick(Climber.getInstance(), m_stick));
 
