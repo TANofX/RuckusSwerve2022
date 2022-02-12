@@ -26,12 +26,30 @@ public class DefaultBallHandler extends CommandBase {
     switch (BallHandler.getInstance().getState()) {
       case ONEBALLPOSITION1:
       case ONEBALLPOSITION3:
-      case ONEBALLPOSITION4:
-        BallHandler.getInstance().setState(HandlerState.ONEBALLPOSITION2);
+        if (BallHandler.getInstance().shooterActivation()) {
+          BallHandler.getInstance().setState(HandlerState.ONEBALLPOSITION4);
+        } else {
+          BallHandler.getInstance().setState(HandlerState.ONEBALLPOSITION2);
+        }
         break;
       case TWOBALLPOSITION1:
       case TWOBALLPOSITION2:
         BallHandler.getInstance().setState(HandlerState.TWOBALLPOSITION3);
+        break;
+      case ONEBALLPOSITION4:
+        if (BallHandler.getInstance().shooterActivation()) {
+          BallHandler.getInstance().stopTransitMotor();
+        } else {
+          BallHandler.getInstance().setState(HandlerState.ONEBALLPOSITION2);
+        }
+        break;
+      case ONEBALLPOSITION2:
+        if (BallHandler.getInstance().shooterActivation()) {
+          BallHandler.getInstance().setState((HandlerState.ONEBALLPOSITION4));
+
+        } else {
+          BallHandler.getInstance().stopTransitMotor();
+        }
         break;
       default:
         BallHandler.getInstance().stopTransitMotor();

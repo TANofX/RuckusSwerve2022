@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -18,7 +19,16 @@ public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
   private Shooter() {
     shooterMotor = new WPI_TalonFX(0);
+    configureFalcon(shooterMotor);
+    shooterFollower = new WPI_TalonFX(1);
+    configureFalcon(shooterFollower);
+    shooterFollower.follow(shooterMotor);
+    shooterFollower.setInverted(InvertType.OpposeMaster);
     //to do: get correct can ID
+   
+
+  }
+  private void configureFalcon(WPI_TalonFX shooterMotor) {
     shooterMotor.setNeutralMode(NeutralMode.Coast);
     shooterMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, Constants.SHOOTER_CURRENT_LIMIT, Constants.SHOOTER_THRESHOLD_CURRENT, Constants.SHOOTER_THRESHOLD_TIMEOUT));
 
@@ -31,7 +41,6 @@ public class Shooter extends SubsystemBase {
     shooterMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0,0);
 
     shooterMotor.setSelectedSensorPosition(0);
-
   }
 /** change angles of shooter?
  * Does shooter wheels have the same speed or is it different?
@@ -42,6 +51,7 @@ public class Shooter extends SubsystemBase {
  */
 
 private WPI_TalonFX shooterMotor;
+private WPI_TalonFX shooterFollower;
 private ShooterSpeeds targetShooterSpeeds = ShooterSpeeds.OFF;
 private static Shooter shooterInstance;
 

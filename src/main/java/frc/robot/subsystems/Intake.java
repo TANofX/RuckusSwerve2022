@@ -69,19 +69,24 @@ public class Intake extends SubsystemBase {
   }
 
   public void runIntake() {
-    solenoid.set(true);
     intakeMotor.set(0.5);
 
   }
 
   public void stopIntake() {
-    solenoid.set(false);
     intakeMotor.stopMotor();
   }
 
   public void reverseIntake() {
-    solenoid.set(true);
     intakeMotor.set(-0.5);
+  }
+
+  public void extendIntake() {
+    solenoid.set(true);
+  }
+
+  public void retractIntake() {
+    solenoid.set(false);
   }
 
   public static Intake getInstance() {

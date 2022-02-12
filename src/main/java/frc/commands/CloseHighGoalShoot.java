@@ -5,6 +5,7 @@
 package frc.commands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.subsystems.BallHandler;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterSpeeds;
 
@@ -21,5 +22,6 @@ public class CloseHighGoalShoot extends InstantCommand {
   @Override
   public void initialize() {
     Shooter.getInstance().startShooter(ShooterSpeeds.CLOSEHIGHGOAL);
+    BallHandler.getInstance().shooterMode(true);
   }
 }

@@ -28,6 +28,7 @@ public class RunIntake extends CommandBase {
   public void initialize() {
     currentAlliance = DriverStation.getAlliance();
     checkReject = false;
+    Intake.getInstance().extendIntake();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -37,6 +38,7 @@ public class RunIntake extends CommandBase {
       if (rejectTimer.hasElapsed(Constants.REVERSE_INTAKE_TIMEOUT)) {
         checkReject = false;
         Intake.getInstance().runIntake();
+    
       }
     }
     else {
@@ -60,6 +62,7 @@ public class RunIntake extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     Intake.getInstance().stopIntake();
+    Intake.getInstance().retractIntake();
   }
 
 
