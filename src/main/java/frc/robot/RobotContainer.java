@@ -6,6 +6,8 @@ package frc.robot;
 
 import commands.CalibrateClimber;
 import commands.CancelClimber;
+import commands.FullSpeedDown;
+import commands.FullSpeedUp;
 import commands.MoveRachelWithJoystick;
 import commands.SetClimberState;
 import commands.ToggleGabeClaw;
@@ -13,7 +15,9 @@ import commands.ToggleRachelReach;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Climber;
@@ -41,6 +45,7 @@ public class RobotContainer {
   final JoystickButton cancelClimber = new JoystickButton(m_stick, Constants.CANCEL_CLIMBER);
   final JoystickButton calibrateClimber = new JoystickButton(m_stick, Constants.CALIBRATE_CLIMBER);
   final JoystickButton lockRachelMoveJoystick = new JoystickButton(m_stick, Constants.LOCK_RACHEL_MOVE_JOYSTICK);
+
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -72,7 +77,9 @@ public class RobotContainer {
 
     lockRachelMoveJoystick.whileHeld(new MoveRachelWithJoystick(Climber.getInstance(), m_stick));
 
-
+    SmartDashboard.putData("Rachel UP Fast", new InstantCommand(Climber.getInstance()::fullSpeedUp,Climber.getInstance()));
+    SmartDashboard.putData("Rachel Down Fast", new InstantCommand(Climber.getInstance()::fullSpeedDown,Climber.getInstance()));
+    SmartDashboard.putData("Stop Rachel Fast", new InstantCommand(Climber.getInstance()::stopRachel,Climber.getInstance()));
 
   }
 

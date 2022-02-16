@@ -474,6 +474,21 @@ public class Climber extends SubsystemBase {
             rightRachelFalcon.set(ControlMode.PercentOutput, -0.1);
       }
 
+      public void fullSpeedUp() {
+            leftRachelFalcon.set(ControlMode.PercentOutput, 1.0);
+            rightRachelFalcon.set(ControlMode.PercentOutput, 1.0);
+      }
+
+      public void fullSpeedDown() {
+            leftRachelFalcon.set(ControlMode.PercentOutput, -1.0);
+            rightRachelFalcon.set(ControlMode.PercentOutput, -1.0);
+      }
+
+      public void fullSpeedStop() {
+            leftRachelFalcon.stopMotor();
+            rightRachelFalcon.stopMotor();
+      }
+
       public boolean isRachelBottomLimit() {
             if ((rachelLeftCollection.isRevLimitSwitchClosed() == 1)
                         && (rachelRightCollection.isRevLimitSwitchClosed() == 1)) {
@@ -606,6 +621,9 @@ public class Climber extends SubsystemBase {
             SmartDashboard.putString("Gabe Bar State", getGabeState().name());
             SmartDashboard.putString("Rachel Extention State", getExtensionState().name());
             // This method will be called once per scheduler run
+            SmartDashboard.putNumber("Current Velocity", getRachelVelocity());
+            SmartDashboard.putNumber("Current Rachel Position", getRachelPosition());
+
       }
 
       public double getMaxVelicity() {
