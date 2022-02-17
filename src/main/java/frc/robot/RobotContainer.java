@@ -13,6 +13,8 @@ import frc.commands.CloseHighGoalShoot;
 import frc.commands.FarHighGoalShoot;
 import frc.commands.LaunchpadGoalShoot;
 import frc.commands.LowGoalShoot;
+import frc.commands.ShootAll;
+import frc.commands.ShootOne;
 import frc.commands.StopShooter;
 import frc.robot.subsystems.BallHandler;
 
@@ -30,6 +32,9 @@ public class RobotContainer {
   private JoystickButton closeHighGoalButton = new JoystickButton(joystick1, 2);
   private JoystickButton farHighGoalButton = new JoystickButton(joystick1, 3);
   private JoystickButton launchpadGoalShoot = new JoystickButton(joystick1, 4);
+  private JoystickButton shootOne = new JoystickButton(joystick1, 6);
+  private JoystickButton shootAll = new JoystickButton(joystick1, 7);
+
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -52,6 +57,8 @@ public class RobotContainer {
     closeHighGoalButton.whenPressed(new CloseHighGoalShoot());
     farHighGoalButton.whenPressed(new FarHighGoalShoot());
     launchpadGoalShoot.whenPressed(new LaunchpadGoalShoot());
+    shootOne.whenPressed(new ShootOne());
+    shootAll.whenPressed(new ShootAll());
 
   }
 

@@ -33,6 +33,7 @@ public class BallHandler extends SubsystemBase {
   private HandlerState currentState = HandlerState.ONEBALLPOSITION1;
   private static BallHandler handlerInstance;
   private HandlerState targetState = HandlerState.ONEBALLPOSITION2;
+  private boolean shooterMode = false;
 
   public BallHandler() {
 
@@ -117,6 +118,12 @@ public class BallHandler extends SubsystemBase {
     return currentState;
   }
 
+  public void shooterMode(boolean activate) {
+    shooterMode = activate; 
+  }
+  public boolean shooterActivation() {
+    return shooterMode;
+  }
   public void setState(HandlerState newState) {
     targetState = newState;
     if (atState())
@@ -144,7 +151,16 @@ public class BallHandler extends SubsystemBase {
           default:
 
         }
-
+        case ONEBALLPOSITION4:
+        switch (currentState) {
+          case ONEBALLPOSITION1:
+          case ONEBALLPOSITION2:
+          case ONEBALLPOSITION3:
+          moveTransitMotor(0.3);
+          break;
+          default:
+          
+        }
       default:
 
     }
