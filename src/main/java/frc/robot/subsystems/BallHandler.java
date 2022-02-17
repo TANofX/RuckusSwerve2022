@@ -4,7 +4,9 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.commands.DefaultBallHandler;
@@ -25,7 +27,7 @@ public class BallHandler extends SubsystemBase {
   }
 
   /** Creates a new BallHandler. */
-  private Spark transitMotor;
+  private CANSparkMax transitMotor;
   private BallSensor firstSensor; // far left (near intake)
   private BallSensor secondSensor;
   private BallSensor thirdSensor;
@@ -42,6 +44,9 @@ public class BallHandler extends SubsystemBase {
     thirdSensor = new BallSensor(Constants.HANDLERSENSOR_3_PORT);
     fourthSensor = new BallSensor(Constants.HANDLERSENSOR_4_PORT);
     setDefaultCommand(new DefaultBallHandler());
+    transitMotor = new CANSparkMax(Constants.TRANSIT_MOTOR_ID, MotorType.kBrushless);
+    transitMotor.setSmartCurrentLimit(29, 10);
+    transitMotor.setOpenLoopRampRate(0.5);
 
   }
 
@@ -132,11 +137,11 @@ public class BallHandler extends SubsystemBase {
       case ONEBALLPOSITION2:
         switch (currentState) {
           case ONEBALLPOSITION1:
-            moveTransitMotor(0.3);
+            moveTransitMotor(Constants.TRANSIT_MOTOR_SPEED);
             break;
           case ONEBALLPOSITION3:
           case ONEBALLPOSITION4:
-            moveTransitMotor(-0.3);
+            moveTransitMotor(-Constants.TRANSIT_MOTOR_SPEED);
             break;
           default:
 
@@ -146,7 +151,7 @@ public class BallHandler extends SubsystemBase {
         switch (currentState) {
           case TWOBALLPOSITION1:
           case TWOBALLPOSITION2:
-            moveTransitMotor(0.3);
+            moveTransitMotor(Constants.TRANSIT_MOTOR_SPEED);
             break;
           default:
 
@@ -156,7 +161,7 @@ public class BallHandler extends SubsystemBase {
           case ONEBALLPOSITION1:
           case ONEBALLPOSITION2:
           case ONEBALLPOSITION3:
-          moveTransitMotor(0.3);
+          moveTransitMotor(Constants.TRANSIT_MOTOR_SPEED);
           break;
           default:
           

@@ -18,9 +18,9 @@ import frc.robot.Constants;
 public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
   private Shooter() {
-    shooterMotor = new WPI_TalonFX(0);
+    shooterMotor = new WPI_TalonFX(Constants.PRIMARY_SHOOTER_ID);
     configureFalcon(shooterMotor);
-    shooterFollower = new WPI_TalonFX(1);
+    shooterFollower = new WPI_TalonFX(Constants.SECONDARY_SHOOTER_ID);
     configureFalcon(shooterFollower);
     shooterFollower.follow(shooterMotor);
     shooterFollower.setInverted(InvertType.OpposeMaster);

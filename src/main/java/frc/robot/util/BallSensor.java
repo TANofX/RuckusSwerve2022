@@ -16,7 +16,6 @@ public class BallSensor extends AnalogInput {
     }
     public BallSensor(int channel) {
         super(channel);
-        //TODO Auto-generated constructor stub
     }
     public BallSensor(int channel, double voltage) {
         this (channel);

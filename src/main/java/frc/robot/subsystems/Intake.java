@@ -4,23 +4,23 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
-import com.revrobotics.ColorSensorV3.ProximitySensorMeasurementRate;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
-  private Spark intakeMotor;
+  private CANSparkMax intakeMotor;
   private ColorSensorV3 colorSensor;
   private Solenoid solenoid;
   private static Intake intakeInstance;
@@ -34,7 +34,9 @@ public class Intake extends SubsystemBase {
     colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
     colorMatcher.addColorMatch(blueTarget);
     colorMatcher.addColorMatch(redTarget);
-
+    intakeMotor = new CANSparkMax(Constants.INTAKE_MOTOR_ID, MotorType.kBrushless);
+    intakeMotor.setSmartCurrentLimit(29, 10);
+    intakeMotor.setOpenLoopRampRate(0.5);
   }
 
   @Override

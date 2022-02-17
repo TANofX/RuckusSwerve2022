@@ -7,7 +7,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.commands.CloseHighGoalShoot;
 import frc.commands.FarHighGoalShoot;
@@ -17,6 +19,7 @@ import frc.commands.ShootAll;
 import frc.commands.ShootOne;
 import frc.commands.StopShooter;
 import frc.robot.subsystems.BallHandler;
+import frc.robot.subsystems.Intake;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -59,6 +62,15 @@ public class RobotContainer {
     launchpadGoalShoot.whenPressed(new LaunchpadGoalShoot());
     shootOne.whenPressed(new ShootOne());
     shootAll.whenPressed(new ShootAll());
+    SmartDashboard.putData("Run Ball Handler", new InstantCommand(() -> BallHandler.getInstance().moveTransitMotor(Constants.TRANSIT_MOTOR_SPEED)));
+    SmartDashboard.putData("Reverse Ball Handler", new InstantCommand(() -> BallHandler.getInstance().moveTransitMotor(-Constants.TRANSIT_MOTOR_SPEED)));
+    SmartDashboard.putData("Stop Ball Handler", new InstantCommand(() -> BallHandler.getInstance().stopTransitMotor()));
+
+    SmartDashboard.putData("Run Intake", new InstantCommand(() ->Intake.getInstance().runIntake()));
+    SmartDashboard.putData("Stop Intake", new InstantCommand(() -> Intake.getInstance().stopIntake()));
+    SmartDashboard.putData("Reverse Intake", new InstantCommand(() -> Intake.getInstance().reverseIntake()));
+    SmartDashboard.putData("Extend Intake", new InstantCommand(() -> Intake.getInstance().extendIntake()));
+    SmartDashboard.putData("retract Intake", new InstantCommand(() -> Intake.getInstance().retractIntake()));
 
   }
 
