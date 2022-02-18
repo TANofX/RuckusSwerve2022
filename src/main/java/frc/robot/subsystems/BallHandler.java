@@ -43,7 +43,7 @@ public class BallHandler extends SubsystemBase {
     secondSensor = new BallSensor(Constants.HANDLERSENSOR_2_PORT);
     thirdSensor = new BallSensor(Constants.HANDLERSENSOR_3_PORT);
     fourthSensor = new BallSensor(Constants.HANDLERSENSOR_4_PORT);
-    setDefaultCommand(new DefaultBallHandler());
+    //setDefaultCommand(new DefaultBallHandler());
     transitMotor = new CANSparkMax(Constants.TRANSIT_MOTOR_ID, MotorType.kBrushless);
     transitMotor.setSmartCurrentLimit(29, 10);
     transitMotor.setOpenLoopRampRate(0.5);

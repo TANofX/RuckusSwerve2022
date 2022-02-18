@@ -5,6 +5,7 @@
 package frc.robot.util;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** Add your docs here. */
 public class BallSensor extends AnalogInput {
@@ -12,6 +13,7 @@ public class BallSensor extends AnalogInput {
     private double triggerVoltage = 0.9;
 
     public boolean isTriggered () {
+        SmartDashboard.putNumber("Sensor " + super.getChannel(), super.getVoltage());
         return getVoltage() >= triggerVoltage;
     }
     public BallSensor(int channel) {
@@ -22,3 +24,4 @@ public class BallSensor extends AnalogInput {
         triggerVoltage = voltage;
     }
 }
+  
