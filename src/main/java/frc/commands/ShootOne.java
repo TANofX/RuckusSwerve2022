@@ -33,7 +33,7 @@ public class ShootOne extends CommandBase {
   @Override
   public void execute() {
     if (Shooter.getInstance().correctSpeed()) {
-      BallHandler.getInstance().moveTransitMotor(0.5);
+      BallHandler.getInstance().moveTransitMotor(-0.25);
     }
     else {
       BallHandler.getInstance().stopTransitMotor();

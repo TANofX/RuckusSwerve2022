@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PneumaticsControlModule;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -30,6 +31,7 @@ public class Intake extends SubsystemBase {
   private Color redTarget = new Color(0.528, 0.347, 0.126);
   private Color allianceColor;
   private PneumaticsControlModule pcm;
+  private boolean intakeExtended = false;
 
   public Intake() {
     pcm = new PneumaticsControlModule(2);
@@ -61,9 +63,12 @@ public class Intake extends SubsystemBase {
         allianceColor = Color.kBlack;
     }
 
+    Color detectedColor = colorSensor.getColor();
+    ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
+    SmartDashboard.putNumber("Red Matched", match.color.red);
+    SmartDashboard.putNumber("Proximity", colorSensor.getProximity());
+
     if (colorSensor.getProximity() >= Constants.DETECTABLE_DISTANCE) {
-      Color detectedColor = colorSensor.getColor();
-      ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
       if (match.color == allianceColor) {
         return true;
       } else {
@@ -75,7 +80,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void runIntake() {
-    intakeMotor.set(0.5);
+    intakeMotor.set(Constants.INTAKE_SPEED);
 
   }
 
@@ -84,19 +89,21 @@ public class Intake extends SubsystemBase {
   }
 
   public void reverseIntake() {
-    intakeMotor.set(-0.5);
+    intakeMotor.set(-1.5 * Constants.INTAKE_SPEED);
   }
 
   public void extendIntake() {
+    intakeExtended = true;
     solenoid.set(true);
   }
 
   public void retractIntake() {
+    intakeExtended = false;
     solenoid.set(false);
   }
 
   public boolean isIntakeExtended() {
-    return solenoid.get();
+    return intakeExtended;
     
   }
 

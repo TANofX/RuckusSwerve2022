@@ -25,7 +25,7 @@ public class ShootAll extends CommandBase {
   @Override
   public void execute() {
     if (Shooter.getInstance().correctSpeed()) {
-      BallHandler.getInstance().moveTransitMotor(0.5);
+      BallHandler.getInstance().moveTransitMotor(-0.25);
     }
     else {
       BallHandler.getInstance().stopTransitMotor();
@@ -43,6 +43,7 @@ public class ShootAll extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-   return (Shooter.getInstance().correctSpeed() && (BallHandler.getInstance().getState() == HandlerState.EMPTY));
+    return false;
+   //return (Shooter.getInstance().correctSpeed() && (BallHandler.getInstance().getState() == HandlerState.EMPTY));
   }
 }

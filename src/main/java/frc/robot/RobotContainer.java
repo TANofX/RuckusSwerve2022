@@ -16,6 +16,7 @@ import frc.commands.DefaultBallHandler;
 import frc.commands.FarHighGoalShoot;
 import frc.commands.LaunchpadGoalShoot;
 import frc.commands.LowGoalShoot;
+import frc.commands.RunIntake;
 import frc.commands.ShootAll;
 import frc.commands.ShootOne;
 import frc.commands.StopShooter;
@@ -32,13 +33,13 @@ import frc.robot.subsystems.Shooter;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private Joystick joystick1 = new Joystick(Constants.JOYSTICK1_PORT);
-  private JoystickButton stopShooterButton = new JoystickButton(joystick1, 5);
-  private JoystickButton lowGoalShootButton = new JoystickButton(joystick1, 1);
-  private JoystickButton closeHighGoalButton = new JoystickButton(joystick1, 2);
-  private JoystickButton farHighGoalButton = new JoystickButton(joystick1, 3);
-  private JoystickButton launchpadGoalShoot = new JoystickButton(joystick1, 4);
-  private JoystickButton shootOne = new JoystickButton(joystick1, 6);
-  private JoystickButton shootAll = new JoystickButton(joystick1, 7);
+  private JoystickButton stopShooterButton = new JoystickButton(joystick1, 7);
+  private JoystickButton lowGoalShootButton = new JoystickButton(joystick1, 3);
+  private JoystickButton closeHighGoalButton = new JoystickButton(joystick1, 5);
+  private JoystickButton farHighGoalButton = new JoystickButton(joystick1, 4);
+  private JoystickButton launchpadGoalShoot = new JoystickButton(joystick1, 6);
+  private JoystickButton shootOne = new JoystickButton(joystick1, 2);
+  private JoystickButton shootAll = new JoystickButton(joystick1, 1);
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -64,17 +65,18 @@ public class RobotContainer {
     closeHighGoalButton.whenPressed(new CloseHighGoalShoot());
     farHighGoalButton.whenPressed(new FarHighGoalShoot());
     launchpadGoalShoot.whenPressed(new LaunchpadGoalShoot());
-    shootOne.whenPressed(new ShootOne());
-    shootAll.whenPressed(new ShootAll());
-    SmartDashboard.putData("Run Ball Handler", new InstantCommand(() -> BallHandler.getInstance().moveTransitMotor(Constants.TRANSIT_MOTOR_SPEED),BallHandler.getInstance()));
-    SmartDashboard.putData("Reverse Ball Handler", new InstantCommand(() -> BallHandler.getInstance().moveTransitMotor(-Constants.TRANSIT_MOTOR_SPEED),BallHandler.getInstance()));
-    SmartDashboard.putData("Stop Ball Handler", new InstantCommand(() -> BallHandler.getInstance().stopTransitMotor(),BallHandler.getInstance()));
+    shootOne.whileHeld(new ShootOne());
+    shootAll.whileHeld(new ShootAll());
+    // SmartDashboard.putData("Run Ball Handler", new InstantCommand(() -> BallHandler.getInstance().moveTransitMotor(Constants.TRANSIT_MOTOR_SPEED),BallHandler.getInstance()));
+    // SmartDashboard.putData("Reverse Ball Handler", new InstantCommand(() -> BallHandler.getInstance().moveTransitMotor(-Constants.TRANSIT_MOTOR_SPEED),BallHandler.getInstance()));
+    // SmartDashboard.putData("Stop Ball Handler", new InstantCommand(() -> BallHandler.getInstance().stopTransitMotor(),BallHandler.getInstance()));
 
-    SmartDashboard.putData("Run Intake", new InstantCommand(() ->Intake.getInstance().runIntake()));
-    SmartDashboard.putData("Stop Intake", new InstantCommand(() -> Intake.getInstance().stopIntake()));
-    SmartDashboard.putData("Reverse Intake", new InstantCommand(() -> Intake.getInstance().reverseIntake()));
-    SmartDashboard.putData("Extend Intake", new InstantCommand(() -> Intake.getInstance().extendIntake()));
-    SmartDashboard.putData("retract Intake", new InstantCommand(() -> Intake.getInstance().retractIntake()));
+    SmartDashboard.putData("Run Intake", new RunIntake());
+    //SmartDashboard.putData("Run Intake", new InstantCommand(() ->Intake.getInstance().runIntake()));
+    // SmartDashboard.putData("Stop Intake", new InstantCommand(() -> Intake.getInstance().stopIntake()));
+    // SmartDashboard.putData("Reverse Intake", new InstantCommand(() -> Intake.getInstance().reverseIntake()));
+    // SmartDashboard.putData("Extend Intake", new InstantCommand(() -> Intake.getInstance().extendIntake()));
+    // SmartDashboard.putData("retract Intake", new InstantCommand(() -> Intake.getInstance().retractIntake()));
 
   }
 

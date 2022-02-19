@@ -36,6 +36,7 @@ public class BallHandler extends SubsystemBase {
   private static BallHandler handlerInstance;
   private HandlerState targetState = HandlerState.ONEBALLPOSITION2;
   private boolean shooterMode = false;
+  private int numberOfBalls = 0;
 
   public BallHandler() {
 
@@ -79,7 +80,7 @@ public class BallHandler extends SubsystemBase {
   }
 
   public void extake() {
-    transitMotor.set(-0.25);
+    transitMotor.set(-Constants.TRANSIT_MOTOR_SPEED);
   }
 
   public void stopTransitMotor() {
@@ -87,23 +88,28 @@ public class BallHandler extends SubsystemBase {
   }
 
   public int ballsInRobot() {
-    int numberOfBalls = 0;
+    int internalNumberOfBalls = 0;
 
     if (firstSensor.isTriggered() && Intake.getInstance().isIntakeExtended()) {
-      numberOfBalls = numberOfBalls + 1;
+      internalNumberOfBalls = internalNumberOfBalls + 1;
     }
 
     if (secondSensor.isTriggered()) {
-      numberOfBalls = numberOfBalls + 1;
+      internalNumberOfBalls = internalNumberOfBalls + 1;
     }
 
     if (thirdSensor.isTriggered()) {
-      numberOfBalls = numberOfBalls + 1;
+      internalNumberOfBalls = internalNumberOfBalls + 1;
     }
 
     if (fourthSensor.isTriggered()) {
-      numberOfBalls = numberOfBalls + 1;
+      internalNumberOfBalls = internalNumberOfBalls + 1;
     }
+
+    //if (internalNumberOfBalls > numberOfBalls) {
+      numberOfBalls = internalNumberOfBalls;
+    //}
+
     return numberOfBalls;
 
   }

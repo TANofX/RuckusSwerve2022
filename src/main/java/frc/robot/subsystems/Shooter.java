@@ -31,7 +31,7 @@ public class Shooter extends SubsystemBase {
   private void configureFalcon(WPI_TalonFX shooterMotor) {
     shooterMotor.setNeutralMode(NeutralMode.Coast);
     shooterMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, Constants.SHOOTER_CURRENT_LIMIT, Constants.SHOOTER_THRESHOLD_CURRENT, Constants.SHOOTER_THRESHOLD_TIMEOUT));
-
+    shooterMotor.configClosedloopRamp(1.0);
     shooterMotor.selectProfileSlot(0,0);
 
     shooterMotor.config_kF(0, Constants.SHOOTER_F, 0);
@@ -62,7 +62,7 @@ private static Shooter shooterInstance;
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-  SmartDashboard.putString("currenttarget", targetShooterSpeeds.name());
+    SmartDashboard.putString("currenttarget", targetShooterSpeeds.name());
   }
 
   public void startShooter(ShooterSpeeds SpeedToShoot) {

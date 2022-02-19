@@ -6,6 +6,7 @@ package frc.commands;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.BallHandler;
@@ -29,6 +30,7 @@ public class RunIntake extends CommandBase {
     currentAlliance = DriverStation.getAlliance();
     checkReject = false;
     Intake.getInstance().extendIntake();
+    SmartDashboard.putString("Alliance", currentAlliance.name());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
