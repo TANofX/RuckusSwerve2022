@@ -95,6 +95,11 @@ public class Intake extends SubsystemBase {
     solenoid.set(false);
   }
 
+  public boolean isIntakeExtended() {
+    return solenoid.get();
+    
+  }
+
   public static Intake getInstance() {
     if (intakeInstance == null) {
       intakeInstance = new Intake();

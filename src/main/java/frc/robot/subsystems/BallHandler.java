@@ -43,7 +43,7 @@ public class BallHandler extends SubsystemBase {
     secondSensor = new BallSensor(Constants.HANDLERSENSOR_2_PORT);
     thirdSensor = new BallSensor(Constants.HANDLERSENSOR_3_PORT);
     fourthSensor = new BallSensor(Constants.HANDLERSENSOR_4_PORT);
-    //setDefaultCommand(new DefaultBallHandler());
+    // setDefaultCommand(new DefaultBallHandler());
     transitMotor = new CANSparkMax(Constants.TRANSIT_MOTOR_ID, MotorType.kBrushless);
     transitMotor.setSmartCurrentLimit(29, 10);
     transitMotor.setOpenLoopRampRate(0.5);
@@ -88,7 +88,7 @@ public class BallHandler extends SubsystemBase {
   public int ballsInRobot() {
     int numberOfBalls = 0;
 
-    if (firstSensor.isTriggered()) {
+    if (firstSensor.isTriggered() && Intake.getInstance().isIntakeExtended()) {
       numberOfBalls = numberOfBalls + 1;
     }
 
@@ -124,11 +124,13 @@ public class BallHandler extends SubsystemBase {
   }
 
   public void shooterMode(boolean activate) {
-    shooterMode = activate; 
+    shooterMode = activate;
   }
+
   public boolean shooterActivation() {
     return shooterMode;
   }
+
   public void setState(HandlerState newState) {
     targetState = newState;
     if (atState())
@@ -156,15 +158,15 @@ public class BallHandler extends SubsystemBase {
           default:
 
         }
-        case ONEBALLPOSITION4:
+      case ONEBALLPOSITION4:
         switch (currentState) {
           case ONEBALLPOSITION1:
           case ONEBALLPOSITION2:
           case ONEBALLPOSITION3:
-          moveTransitMotor(Constants.TRANSIT_MOTOR_SPEED);
-          break;
+            moveTransitMotor(Constants.TRANSIT_MOTOR_SPEED);
+            break;
           default:
-          
+
         }
       default:
 
@@ -176,36 +178,110 @@ public class BallHandler extends SubsystemBase {
   }
 
   private void stateMachine() {
+    HandlerState nextState = HandlerState.UNKNOWN;
     if (ballsInRobot() == 0) {
-      currentState = HandlerState.EMPTY;
+      nextState = HandlerState.EMPTY;
     }
 
     if ((ballsInRobot() == 1) && (firstSensor.isTriggered())) {
-      currentState = HandlerState.ONEBALLPOSITION1;
+      nextState = HandlerState.ONEBALLPOSITION1;
     }
 
     if ((ballsInRobot() == 1) && (secondSensor.isTriggered())) {
-      currentState = HandlerState.ONEBALLPOSITION2;
+      nextState = HandlerState.ONEBALLPOSITION2;
     }
 
     if ((ballsInRobot() == 1) && (thirdSensor.isTriggered())) {
-      currentState = HandlerState.ONEBALLPOSITION3;
+      nextState = HandlerState.ONEBALLPOSITION3;
     }
 
     if ((ballsInRobot() == 1) && (fourthSensor.isTriggered())) {
-      currentState = HandlerState.ONEBALLPOSITION4;
+      nextState = HandlerState.ONEBALLPOSITION4;
     }
 
     if ((ballsInRobot() == 2) && (firstSensor.isTriggered()) && (secondSensor.isTriggered())) {
-      currentState = HandlerState.TWOBALLPOSITION1;
+      nextState = HandlerState.TWOBALLPOSITION1;
     }
 
     if ((ballsInRobot() == 2) && (secondSensor.isTriggered()) && (thirdSensor.isTriggered())) {
-      currentState = HandlerState.TWOBALLPOSITION2;
+      nextState = HandlerState.TWOBALLPOSITION2;
     }
 
     if ((ballsInRobot() == 2) && (thirdSensor.isTriggered()) && (fourthSensor.isTriggered())) {
-      currentState = HandlerState.TWOBALLPOSITION3;
+      nextState = HandlerState.TWOBALLPOSITION3;
+    }
+
+    switch (currentState) {
+      case EMPTY:
+        switch (nextState) {
+          case ONEBALLPOSITION1:
+          case ONEBALLPOSITION4:
+            currentState = nextState;
+            break;
+          default:
+        }
+        break;
+      case ONEBALLPOSITION1:
+        switch (nextState) {
+          case ONEBALLPOSITION2:
+          case EMPTY:
+            currentState = nextState;
+            break;
+          default:
+        }
+      case ONEBALLPOSITION2:
+        switch (nextState) {
+          case ONEBALLPOSITION3:
+          case ONEBALLPOSITION1:
+          case TWOBALLPOSITION1:
+            currentState = nextState;
+            break;
+          default:
+        }
+      case ONEBALLPOSITION3:
+        switch (nextState) {
+          case ONEBALLPOSITION2:
+          case ONEBALLPOSITION4:
+            currentState = nextState;
+            break;
+          default:
+        }
+      case ONEBALLPOSITION4:
+        switch (nextState) {
+          case ONEBALLPOSITION3:
+          case EMPTY:
+            currentState = nextState;
+            break;
+          default:
+        }
+      case TWOBALLPOSITION1:
+        switch (nextState) {
+          case ONEBALLPOSITION2:
+          case TWOBALLPOSITION2:
+          case ONEBALLPOSITION1:
+            currentState = nextState;
+            break;
+          default:
+        }
+      case TWOBALLPOSITION2:
+        switch (nextState) {
+          case TWOBALLPOSITION1:
+          case TWOBALLPOSITION3:
+            currentState = nextState;
+            break;
+          default:
+        }
+      case TWOBALLPOSITION3:
+        switch (nextState) {
+          case TWOBALLPOSITION2:
+          case ONEBALLPOSITION4:
+          case ONEBALLPOSITION3:
+            currentState = nextState;
+            break;
+          default:
+        }
+      default:
+      currentState = nextState;
     }
   }
 
