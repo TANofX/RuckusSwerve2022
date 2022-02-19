@@ -71,6 +71,7 @@ public class BallHandler extends SubsystemBase {
     // This method will be called once per scheduler run
     stateMachine();
     SmartDashboard.putString("HandlerState", currentState.name());
+    SmartDashboard.putNumber("number of Cargo", this.ballsInRobot());
   }
 
   public void moveTransitMotor(double velocity) {
@@ -211,10 +212,13 @@ public class BallHandler extends SubsystemBase {
       nextState = HandlerState.TWOBALLPOSITION3;
     }
 
+    SmartDashboard.putString("next state", nextState.name());
+
     switch (currentState) {
       case EMPTY:
         switch (nextState) {
           case ONEBALLPOSITION1:
+          case ONEBALLPOSITION2:
           case ONEBALLPOSITION4:
             currentState = nextState;
             break;
