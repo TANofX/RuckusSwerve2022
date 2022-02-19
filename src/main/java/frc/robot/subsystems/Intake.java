@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.PneumaticsControlModule;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.util.Color;
@@ -28,9 +29,12 @@ public class Intake extends SubsystemBase {
   private Color blueTarget = new Color(0.169, 0.405, 0.426);
   private Color redTarget = new Color(0.528, 0.347, 0.126);
   private Color allianceColor;
+  private PneumaticsControlModule pcm;
 
   public Intake() {
-    solenoid = new Solenoid(PneumaticsModuleType.CTREPCM, Constants.INTAKE_SOLENOID_PORT);
+    pcm = new PneumaticsControlModule(2);
+    solenoid = pcm.makeSolenoid(Constants.INTAKE_SOLENOID_PORT);
+    //solenoid = new Solenoid(PneumaticsModuleType.CTREPCM, Constants.INTAKE_SOLENOID_PORT);
     colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
     colorMatcher.addColorMatch(blueTarget);
     colorMatcher.addColorMatch(redTarget);

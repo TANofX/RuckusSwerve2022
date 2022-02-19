@@ -20,6 +20,7 @@ import frc.commands.ShootOne;
 import frc.commands.StopShooter;
 import frc.robot.subsystems.BallHandler;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -43,6 +44,8 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     BallHandler.getInstance();
+    Intake.getInstance();
+    Shooter.getInstance();
     
     configureButtonBindings();
   }
