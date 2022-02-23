@@ -9,6 +9,7 @@ import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.ColorSensorV3.RawColor;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
@@ -48,28 +49,44 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    RawColor rawColor = colorSensor.getRawColor();
+    double[] rawColorArray = new double[4];
 
+    rawColorArray[0] = rawColor.red;
+    rawColorArray[1] = rawColor.green;
+    rawColorArray[2] = rawColor.blue;
+    rawColorArray[3] = rawColor.ir;
+    SmartDashboard.putNumberArray("sensorColor", rawColorArray);
   }
 
   public boolean checkColor(DriverStation.Alliance ourAlliance) {
+    int matchIndex = 1;
+
     switch (ourAlliance) {
       case Red:
         allianceColor = redTarget;
+        matchIndex = 0;
         break;
       case Blue:
         allianceColor = blueTarget;
+        matchIndex = 2;
         break;
       default:
         allianceColor = Color.kBlack;
     }
+    RawColor rawColor = colorSensor.getRawColor();
+    double[] rawColorArray = new double[4];
 
-    Color detectedColor = colorSensor.getColor();
-    ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
-    SmartDashboard.putNumber("Red Matched", match.color.red);
+    rawColorArray[0] = rawColor.red;
+    rawColorArray[1] = rawColor.green;
+    rawColorArray[2] = rawColor.blue;
+    rawColorArray[3] = rawColor.ir;
+    //Color detectedColor = colorSensor.getColor();
+    //ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
     SmartDashboard.putNumber("Proximity", colorSensor.getProximity());
 
     if (colorSensor.getProximity() >= Constants.DETECTABLE_DISTANCE) {
-      if (match.color == allianceColor) {
+      if (rawColorArray[matchIndex] >= 5000) {
         return true;
       } else {
         return false;
