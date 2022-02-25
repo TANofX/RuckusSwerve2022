@@ -23,37 +23,7 @@ public class DefaultBallHandler extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    switch (BallHandler.getInstance().getState()) {
-      case ONEBALLPOSITION1:
-      case ONEBALLPOSITION3:
-        if (BallHandler.getInstance().shooterActivation()) {
-          BallHandler.getInstance().setState(HandlerState.ONEBALLPOSITION4);
-        } else {
-          BallHandler.getInstance().setState(HandlerState.ONEBALLPOSITION2);
-        }
-        break;
-      case TWOBALLPOSITION1:
-      case TWOBALLPOSITION2:
-        BallHandler.getInstance().setState(HandlerState.TWOBALLPOSITION3);
-        break;
-      case ONEBALLPOSITION4:
-        if (BallHandler.getInstance().shooterActivation()) {
-          BallHandler.getInstance().stopTransitMotor();
-        } else {
-          BallHandler.getInstance().setState(HandlerState.ONEBALLPOSITION2);
-        }
-        break;
-      case ONEBALLPOSITION2:
-        if (BallHandler.getInstance().shooterActivation()) {
-          BallHandler.getInstance().setState((HandlerState.ONEBALLPOSITION4));
-
-        } else {
-          BallHandler.getInstance().stopTransitMotor();
-        }
-        break;
-      default:
-        BallHandler.getInstance().stopTransitMotor();
-    }
+    BallHandler.getInstance().runHandler();
   }
 
   // Called once the command ends or is interrupted.

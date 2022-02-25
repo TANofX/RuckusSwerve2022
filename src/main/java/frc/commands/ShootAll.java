@@ -12,7 +12,6 @@ import frc.robot.subsystems.BallHandler.HandlerState;
 public class ShootAll extends CommandBase {
   /** Creates a new ShootAll. */
   public ShootAll() {
-    addRequirements(BallHandler.getInstance());
     
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -25,10 +24,7 @@ public class ShootAll extends CommandBase {
   @Override
   public void execute() {
     if (Shooter.getInstance().correctSpeed()) {
-      BallHandler.getInstance().moveTransitMotor(-0.25);
-    }
-    else {
-      BallHandler.getInstance().stopTransitMotor();
+      BallHandler.getInstance().shoot();
     }
   }
 
@@ -37,13 +33,12 @@ public class ShootAll extends CommandBase {
   public void end(boolean interrupted) {
     Shooter.getInstance().stopShooter();
     BallHandler.getInstance().shooterMode(false);
-    BallHandler.getInstance().stopTransitMotor();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return BallHandler.getInstance().getState() == HandlerState.EMPTY;
    //return (Shooter.getInstance().correctSpeed() && (BallHandler.getInstance().getState() == HandlerState.EMPTY));
   }
 }

@@ -13,7 +13,6 @@ public class ShootOne extends CommandBase {
   private HandlerState targetState;
   /** Creates a new ShootAll. */
   public ShootOne() {
-    addRequirements(BallHandler.getInstance());
     
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -22,7 +21,7 @@ public class ShootOne extends CommandBase {
   @Override
   public void initialize() {
     if (BallHandler.getInstance().ballsInRobot() == 2) {
-      targetState = HandlerState.ONEBALLPOSITION4;
+      targetState = HandlerState.ONEBALLREADYTOSHOOT;
     }
     else {
       targetState = HandlerState.EMPTY;
@@ -33,10 +32,7 @@ public class ShootOne extends CommandBase {
   @Override
   public void execute() {
     if (Shooter.getInstance().correctSpeed()) {
-      BallHandler.getInstance().moveTransitMotor(-0.25);
-    }
-    else {
-      BallHandler.getInstance().stopTransitMotor();
+      BallHandler.getInstance().shoot();
     }
   }
 
@@ -45,7 +41,6 @@ public class ShootOne extends CommandBase {
   public void end(boolean interrupted) {
     Shooter.getInstance().stopShooter();
     BallHandler.getInstance().shooterMode(false);
-    BallHandler.getInstance().stopTransitMotor();
   }
 
   // Returns true when the command should end.
