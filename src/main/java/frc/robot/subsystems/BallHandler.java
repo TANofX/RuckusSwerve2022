@@ -47,8 +47,7 @@ public class BallHandler extends SubsystemBase {
     // setDefaultCommand(new DefaultBallHandler());
     transitMotor = new CANSparkMax(Constants.TRANSIT_MOTOR_ID, MotorType.kBrushless);
     transitMotor.setSmartCurrentLimit(29, 10);
-    transitMotor.setOpenLoopRampRate(0.5);
-
+    transitMotor.setOpenLoopRampRate(0.75);
   }
 
   /**
@@ -73,6 +72,7 @@ public class BallHandler extends SubsystemBase {
     stateMachine();
     SmartDashboard.putString("HandlerState", currentState.name());
     SmartDashboard.putNumber("number of Cargo", this.ballsInRobot());
+    SmartDashboard.putBoolean("Ready for Intake", this.readyForIntake());
   }
 
   public void moveTransitMotor(double velocity) {
@@ -113,7 +113,6 @@ public class BallHandler extends SubsystemBase {
     switch (currentState) {
       case EMPTY:
       case ONEBALLREADY:
-
         return true;
       default:
         return false;
@@ -154,11 +153,13 @@ public class BallHandler extends SubsystemBase {
   public void runHandler() {
     if (shooterMode) {
       switch (currentState) {
-        case ONEBALLREADY:
         case ONEBALLSHOOT:
         case TWOBALLSHOOT:
-        case ONEBALLSHOT:
           moveTransitMotor(Constants.TRANSIT_MOTOR_SPEED);
+          break;
+        case ONEBALLREADY:
+        case ONEBALLSHOT:
+          moveTransitMotor(Constants.TRANSIT_MOTOR_SPEED / 2.0);
           break;
         default:
           stopTransitMotor();
@@ -172,6 +173,7 @@ public class BallHandler extends SubsystemBase {
           break;
         case ONEBALLRESET:
           moveTransitMotor(-Constants.TRANSIT_MOTOR_SPEED);
+          break;
         default:
           stopTransitMotor();
       }
@@ -201,7 +203,7 @@ public class BallHandler extends SubsystemBase {
       if (secondSensor.isTriggered() && (currentState == HandlerState.ONEBALLINTAKE)) {
         currentState = HandlerState.ONEBALLREADY;
       }
-      if (firstSensor.isTriggered() && secondSensor.isTriggered() && (currentState == HandlerState.ONEBALLREADY)) {
+      if (firstSensor.isTriggered()  && (currentState == HandlerState.ONEBALLREADY)) {
         currentState = HandlerState.TWOBALLINTAKE;
       }
       if (thirdSensor.isTriggered() && (currentState == HandlerState.TWOBALLINTAKE)) {
@@ -210,11 +212,8 @@ public class BallHandler extends SubsystemBase {
       if (firstSensor.isTriggered() && (currentState == HandlerState.ONEBALLRESET)) {
         currentState = HandlerState.ONEBALLINTAKE;
       }
-
-      currentState = HandlerState.UNKNOWN;
-
     } else {
-      if (thirdSensor.isTriggered() && (currentState == HandlerState.ONEBALLREADY)) {
+      if (thirdSensor.isTriggered() && ((currentState == HandlerState.ONEBALLREADY) || (currentState == HandlerState.ONEBALLSHOT))) {
         currentState = HandlerState.ONEBALLREADYTOSHOOT;
       }
       if (!thirdSensor.isTriggered() && (currentState == HandlerState.ONEBALLSHOOT)) {
@@ -222,7 +221,6 @@ public class BallHandler extends SubsystemBase {
       }
       if (!thirdSensor.isTriggered() && (currentState == HandlerState.TWOBALLSHOOT)) {
         currentState = HandlerState.ONEBALLSHOT;
-
       }
 
     }

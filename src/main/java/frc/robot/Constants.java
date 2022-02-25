@@ -34,6 +34,6 @@ public final class Constants {
     public static final int SECONDARY_SHOOTER_ID = 11;
     public static final int TRANSIT_MOTOR_ID = 8;
     public static final int INTAKE_MOTOR_ID = 9;
-    public static final double TRANSIT_MOTOR_SPEED = -0.25;
+    public static final double TRANSIT_MOTOR_SPEED = -0.1;
     public static final double INTAKE_SPEED = 0.6;
 }

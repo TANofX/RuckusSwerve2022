@@ -65,8 +65,8 @@ public class RobotContainer {
     closeHighGoalButton.whenPressed(new CloseHighGoalShoot());
     farHighGoalButton.whenPressed(new FarHighGoalShoot());
     launchpadGoalShoot.whenPressed(new LaunchpadGoalShoot());
-    shootOne.whileHeld(new ShootOne());
-    shootAll.whileHeld(new ShootAll());
+    shootOne.whenPressed(new ShootOne());
+    shootAll.whenPressed(new ShootAll());
     // SmartDashboard.putData("Run Ball Handler", new InstantCommand(() -> BallHandler.getInstance().moveTransitMotor(Constants.TRANSIT_MOTOR_SPEED),BallHandler.getInstance()));
     // SmartDashboard.putData("Reverse Ball Handler", new InstantCommand(() -> BallHandler.getInstance().moveTransitMotor(-Constants.TRANSIT_MOTOR_SPEED),BallHandler.getInstance()));
     // SmartDashboard.putData("Stop Ball Handler", new InstantCommand(() -> BallHandler.getInstance().stopTransitMotor(),BallHandler.getInstance()));

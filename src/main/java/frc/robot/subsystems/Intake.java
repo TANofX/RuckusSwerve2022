@@ -60,16 +60,19 @@ public class Intake extends SubsystemBase {
   }
 
   public boolean checkColor(DriverStation.Alliance ourAlliance) {
-    int matchIndex = 1;
+    int greaterIndex = 1;
+    int lessIndex = 4;
 
     switch (ourAlliance) {
       case Red:
         allianceColor = redTarget;
-        matchIndex = 0;
+        greaterIndex = 0;
+        lessIndex = 2;
         break;
       case Blue:
         allianceColor = blueTarget;
-        matchIndex = 2;
+        greaterIndex = 2;
+        lessIndex = 0;
         break;
       default:
         allianceColor = Color.kBlack;
@@ -86,7 +89,7 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putNumber("Proximity", colorSensor.getProximity());
 
     if (colorSensor.getProximity() >= Constants.DETECTABLE_DISTANCE) {
-      if (rawColorArray[matchIndex] >= 5000) {
+      if (rawColorArray[greaterIndex] > rawColorArray[lessIndex]) {
         return true;
       } else {
         return false;

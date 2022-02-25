@@ -12,8 +12,8 @@ public class BallSensor extends DigitalInput {
 
    
     public boolean isTriggered () {
-        SmartDashboard.putBoolean("Sensor " + super.getChannel(), super.get());
-        return get();
+        SmartDashboard.putBoolean("Sensor " + super.getChannel(), !super.get());
+        return !get();
     }
     public BallSensor(int channel) {
         super(channel);
