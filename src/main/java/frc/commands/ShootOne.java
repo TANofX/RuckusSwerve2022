@@ -11,6 +11,7 @@ import frc.robot.subsystems.BallHandler.HandlerState;
 
 public class ShootOne extends CommandBase {
   private HandlerState targetState;
+  private boolean shot;
   /** Creates a new ShootAll. */
   public ShootOne() {
     
@@ -26,13 +27,15 @@ public class ShootOne extends CommandBase {
     else {
       targetState = HandlerState.EMPTY;
     }
+    shot = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (Shooter.getInstance().correctSpeed()) {
+    if (Shooter.getInstance().correctSpeed() && !shot) {
       BallHandler.getInstance().shoot();
+      shot = true;
     }
   }
 

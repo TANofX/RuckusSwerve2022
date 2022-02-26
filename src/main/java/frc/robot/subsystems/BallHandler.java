@@ -47,7 +47,7 @@ public class BallHandler extends SubsystemBase {
     // setDefaultCommand(new DefaultBallHandler());
     transitMotor = new CANSparkMax(Constants.TRANSIT_MOTOR_ID, MotorType.kBrushless);
     transitMotor.setSmartCurrentLimit(29, 10);
-    transitMotor.setOpenLoopRampRate(0.75);
+    transitMotor.setOpenLoopRampRate(0.05);
   }
 
   /**
