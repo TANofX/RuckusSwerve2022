@@ -17,9 +17,9 @@ public final class Constants {
     public static final int SHOOTER_CURRENT_LIMIT = 39;
     public static final int SHOOTER_THRESHOLD_CURRENT = 60;
     public static final double SHOOTER_THRESHOLD_TIMEOUT = 0.01;
-    public static final double SHOOTER_F = 0.048;
-    public static final double SHOOTER_P = 0.15;
-    public static final double SHOOTER_I = 0.0;
+    public static final double SHOOTER_F = 0.04;
+    public static final double SHOOTER_P = 0.1;
+    public static final double SHOOTER_I = 0.001;
     public static final double SHOOTER_SPEED = 0.9;
     public static final double SHOOTER_SPIN_ERROR = 100;
     public static final int JOYSTICK1_PORT = 1;
@@ -28,14 +28,14 @@ public final class Constants {
     public static final int HANDLERSENSOR_3_PORT = 2;
     public static final int HANDLERSENSOR_4_PORT = 3;
     public static final int INTAKE_SOLENOID_PORT = 0;
-    public static final int DETECTABLE_DISTANCE = 800;
+    public static final int DETECTABLE_DISTANCE = 250;
     public static final double REVERSE_INTAKE_TIMEOUT = 1.0;
     public static final int PRIMARY_SHOOTER_ID = 10;
     public static final int SECONDARY_SHOOTER_ID = 11;
     public static final int TRANSIT_MOTOR_ID = 8;
     public static final int INTAKE_MOTOR_ID = 9;
-    public static final double TRANSIT_MOTOR_SPEED = -0.5;
-    public static final double INTAKE_SPEED = 0.6;
+    public static final double TRANSIT_MOTOR_SPEED = -0.9;
+    public static final double INTAKE_SPEED = 0.5;
     public static final int XBOX_PORT = 0;
     public static final int RUNINTAKE = 3;
 }

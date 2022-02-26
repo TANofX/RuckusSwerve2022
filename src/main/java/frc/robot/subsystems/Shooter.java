@@ -39,6 +39,7 @@ public class Shooter extends SubsystemBase {
     shooterMotor.config_kI(0, Constants.SHOOTER_I, 0);
 
     shooterMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0,0);
+    shooterMotor.config_IntegralZone(0, 4 * Constants.SHOOTER_SPIN_ERROR);
 
     shooterMotor.setSelectedSensorPosition(0);
   }
@@ -63,6 +64,9 @@ private static Shooter shooterInstance;
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putString("currenttarget", targetShooterSpeeds.name());
+
+    SmartDashboard.putNumber("Target speed", targetShooterSpeeds.getMotorSpeed());
+    SmartDashboard.putNumber("Shooter speed", shooterMotor.getSelectedSensorVelocity());
   }
 
   public void startShooter(ShooterSpeeds SpeedToShoot) {

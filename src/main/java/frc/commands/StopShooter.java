@@ -5,6 +5,7 @@
 package frc.commands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.subsystems.BallHandler;
 import frc.robot.subsystems.Shooter;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -20,5 +21,6 @@ public class StopShooter extends InstantCommand {
   @Override
   public void initialize() {
     Shooter.getInstance().stopShooter();
+    BallHandler.getInstance().shooterMode(false);
   }
 }

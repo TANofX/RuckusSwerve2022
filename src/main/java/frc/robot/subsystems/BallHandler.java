@@ -159,7 +159,7 @@ public class BallHandler extends SubsystemBase {
           break;
         case ONEBALLREADY:
         case ONEBALLSHOT:
-          moveTransitMotor(Constants.TRANSIT_MOTOR_SPEED / 2.0);
+          moveTransitMotor(Constants.TRANSIT_MOTOR_SPEED);
           break;
         default:
           stopTransitMotor();

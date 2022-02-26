@@ -57,6 +57,7 @@ public class Intake extends SubsystemBase {
     rawColorArray[2] = rawColor.blue;
     rawColorArray[3] = rawColor.ir;
     SmartDashboard.putNumberArray("sensorColor", rawColorArray);
+    SmartDashboard.putNumber("Proximity", colorSensor.getProximity());
   }
 
   public boolean checkColor(DriverStation.Alliance ourAlliance) {
@@ -86,7 +87,7 @@ public class Intake extends SubsystemBase {
     rawColorArray[3] = rawColor.ir;
     //Color detectedColor = colorSensor.getColor();
     //ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
-    SmartDashboard.putNumber("Proximity", colorSensor.getProximity());
+   
 
     if (colorSensor.getProximity() >= Constants.DETECTABLE_DISTANCE) {
       if (rawColorArray[greaterIndex] > rawColorArray[lessIndex]) {
