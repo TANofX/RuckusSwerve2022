@@ -23,6 +23,7 @@ import frc.commands.StopShooter;
 import frc.robot.subsystems.BallHandler;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.util.JoyStickAxisButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -40,6 +41,8 @@ public class RobotContainer {
   private JoystickButton launchpadGoalShoot = new JoystickButton(joystick1, 6);
   private JoystickButton shootOne = new JoystickButton(joystick1, 2);
   private JoystickButton shootAll = new JoystickButton(joystick1, 1);
+  private Joystick xbox = new Joystick(Constants.XBOX_PORT);
+  private final JoyStickAxisButton runInake = new JoyStickAxisButton(xbox, Constants.RUNINTAKE);
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -71,7 +74,7 @@ public class RobotContainer {
     // SmartDashboard.putData("Reverse Ball Handler", new InstantCommand(() -> BallHandler.getInstance().moveTransitMotor(-Constants.TRANSIT_MOTOR_SPEED),BallHandler.getInstance()));
     // SmartDashboard.putData("Stop Ball Handler", new InstantCommand(() -> BallHandler.getInstance().stopTransitMotor(),BallHandler.getInstance()));
 
-    SmartDashboard.putData("Run Intake", new RunIntake());
+    runInake.whileActiveContinuous(new RunIntake());
     //SmartDashboard.putData("Run Intake", new InstantCommand(() ->Intake.getInstance().runIntake()));
     // SmartDashboard.putData("Stop Intake", new InstantCommand(() -> Intake.getInstance().stopIntake()));
     // SmartDashboard.putData("Reverse Intake", new InstantCommand(() -> Intake.getInstance().reverseIntake()));

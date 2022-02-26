@@ -22,7 +22,7 @@ public final class Constants {
     public static final double SHOOTER_I = 0.0;
     public static final double SHOOTER_SPEED = 0.9;
     public static final double SHOOTER_SPIN_ERROR = 100;
-    public static final int JOYSTICK1_PORT = 0;
+    public static final int JOYSTICK1_PORT = 1;
     public static final int HANDLERSENSOR_1_PORT = 0;
     public static final int HANDLERSENSOR_2_PORT = 1;
     public static final int HANDLERSENSOR_3_PORT = 2;
@@ -34,6 +34,8 @@ public final class Constants {
     public static final int SECONDARY_SHOOTER_ID = 11;
     public static final int TRANSIT_MOTOR_ID = 8;
     public static final int INTAKE_MOTOR_ID = 9;
-    public static final double TRANSIT_MOTOR_SPEED = -0.1;
+    public static final double TRANSIT_MOTOR_SPEED = -0.5;
     public static final double INTAKE_SPEED = 0.6;
+    public static final int XBOX_PORT = 0;
+    public static final int RUNINTAKE = 3;
 }
