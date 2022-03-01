@@ -7,9 +7,11 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.simulation.XboxControllerSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.commands.CloseHighGoalShoot;
 import frc.commands.DefaultBallHandler;
@@ -21,6 +23,7 @@ import frc.commands.ShootAll;
 import frc.commands.ShootOne;
 import frc.commands.StopShooter;
 import frc.robot.subsystems.BallHandler;
+import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.util.JoyStickAxisButton;
@@ -44,7 +47,6 @@ public class RobotContainer {
   private Joystick xbox = new Joystick(Constants.XBOX_PORT);
   private final JoyStickAxisButton runInake = new JoyStickAxisButton(xbox, Constants.RUNINTAKE);
 
-
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
@@ -62,6 +64,11 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
+    DriveSubsystem.getInstance().setDefaultCommand( new RunCommand(
+        () -> DriveSubsystem.getInstance().arcadeDrive(
+          -xbox.getRawAxis(1), xbox.getRawAxis(4)), 
+          DriveSubsystem.getInstance()));
     
     stopShooterButton.whenPressed(new StopShooter());
     lowGoalShootButton.whenPressed(new LowGoalShoot());

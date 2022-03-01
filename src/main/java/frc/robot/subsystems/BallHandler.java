@@ -71,6 +71,7 @@ public class BallHandler extends SubsystemBase {
     // This method will be called once per scheduler run
     stateMachine();
     SmartDashboard.putString("HandlerState", currentState.name());
+    SmartDashboard.putBoolean("ShooterMode", shooterMode);
     SmartDashboard.putNumber("number of Cargo", this.ballsInRobot());
     SmartDashboard.putBoolean("Ready for Intake", this.readyForIntake());
   }
