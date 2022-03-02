@@ -90,6 +90,9 @@ public class Intake extends SubsystemBase {
    
 
     if (colorSensor.getProximity() >= Constants.DETECTABLE_DISTANCE) {
+      if (rawColorArray[greaterIndex] < 650) {
+        return true;
+      }
       if (rawColorArray[greaterIndex] > rawColorArray[lessIndex]) {
         return true;
       } else {

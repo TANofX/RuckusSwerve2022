@@ -35,6 +35,7 @@ public final class Constants {
     public static final int HANDLERSENSOR_4_PORT = 3;
     public static final int TRANSIT_MOTOR_ID = 8;
     public static final double TRANSIT_MOTOR_SPEED = -0.5;
+    public static final double CLEAR_TIMEOUT = 2.0;
 
     // Intake Constants
     public static final int INTAKE_SOLENOID_PORT = 0;
