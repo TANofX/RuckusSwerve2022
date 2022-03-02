@@ -4,6 +4,8 @@
 
 package frc.robot.util;
 
+import edu.wpi.first.wpilibj.Joystick;
+
 /** Add your docs here. */
 public class JoystickUtils {
     public static double scaleDeadband(double input, double deadBand) {
@@ -12,5 +14,9 @@ public class JoystickUtils {
         }
         else 
             return Math.signum(input) * (Math.abs(input) - deadBand) / (1.0 - deadBand);
+    }
+
+    public static HatSwitchButton getHatSwitchButton(Joystick stick, HatSwitchButton.HatDirection direction) {
+        return new HatSwitchButton(stick, direction);
     }
 }
