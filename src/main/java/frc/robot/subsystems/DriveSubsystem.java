@@ -4,24 +4,21 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.sensors.WPI_PigeonIMU;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import frc.robot.Constants.DriveConstants;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
- import com.ctre.phoenix.sensors.PigeonIMU;
-import com.ctre.phoenix.sensors.WPI_PigeonIMU;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.Constants.DriveConstants;
 
 public class DriveSubsystem extends SubsystemBase {
   // The motors on the left side of the drive.
@@ -60,16 +57,16 @@ public class DriveSubsystem extends SubsystemBase {
   private DriveSubsystem() {
     WPI_TalonFX leftMotor1 = new WPI_TalonFX(DriveConstants.kLeftMotor1Port);
     WPI_TalonFX leftMotor2 = new WPI_TalonFX(DriveConstants.kLeftMotor2Port);
-    leftMotor1.setNeutralMode(NeutralMode.Brake);
-    leftMotor2.setNeutralMode(NeutralMode.Brake);
+    configureDriveMotor(leftMotor1);
+    configureDriveMotor(leftMotor2);
     m_leftMotors = new MotorControllerGroup(leftMotor1, leftMotor2);
 
     m_leftSensor = leftMotor1.getSensorCollection();
 
     WPI_TalonFX rightMotor1 = new WPI_TalonFX(DriveConstants.kRightMotor1Port);
     WPI_TalonFX rightMotor2 = new WPI_TalonFX(DriveConstants.kRightMotor2Port);
-    rightMotor1.setNeutralMode(NeutralMode.Brake);
-    rightMotor2.setNeutralMode(NeutralMode.Brake);
+    configureDriveMotor(rightMotor1);
+    configureDriveMotor(rightMotor2);
     m_rightMotors = new MotorControllerGroup(rightMotor1, rightMotor2);
     m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
 
@@ -87,6 +84,15 @@ public class DriveSubsystem extends SubsystemBase {
     resetEncoders();
     zeroHeading();
     m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d());
+  }
+
+  private void configureDriveMotor(WPI_TalonFX motor) {
+    motor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 
+                                                                        Constants.DriveConstants.kCurrentLimit, 
+                                                                        Constants.DriveConstants.kThresholdCurrent, 
+                                                                        Constants.DriveConstants.kThresholdTimeout));
+    motor.setNeutralMode(NeutralMode.Brake);
+    motor.configOpenloopRamp(0.15);
   }
 
   @Override
@@ -153,6 +159,11 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void arcadeDrive(double fwd, double rot) {
     m_drive.arcadeDrive(fwd, rot);
+  }
+
+  public void curvatureDrive(double fwd, double rot) {
+    boolean isQuickTurn = Math.abs(fwd) <= Constants.DriveConstants.kMinimumTurnRate;
+    m_drive.curvatureDrive(fwd, rot, isQuickTurn);
   }
 
   /**

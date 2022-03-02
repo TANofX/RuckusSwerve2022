@@ -7,8 +7,7 @@
 
 package frc.robot.util;
 
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
@@ -16,18 +15,18 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class JoyStickAxisButton extends Trigger {
 
-    private Joystick stick;
+    private GenericHID stick;
     private int axis;
     private boolean isInverted = false;
 
-    public JoyStickAxisButton(Joystick dave, int trigger, boolean isInverted){
+    public JoyStickAxisButton(GenericHID dave, int trigger, boolean isInverted){
 
         this(dave, trigger);
         this.isInverted = isInverted;
 
     }
 
-    public JoyStickAxisButton(Joystick dave, int trigger){
+    public JoyStickAxisButton(GenericHID dave, int trigger){
 
         stick = dave;
         axis = trigger;

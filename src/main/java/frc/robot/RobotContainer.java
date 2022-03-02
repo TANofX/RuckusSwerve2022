@@ -7,10 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.simulation.XboxControllerSim;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.commands.CloseHighGoalShoot;
@@ -27,6 +24,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.util.JoyStickAxisButton;
+import frc.robot.util.JoystickUtils;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -36,16 +34,17 @@ import frc.robot.util.JoyStickAxisButton;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private Joystick joystick1 = new Joystick(Constants.JOYSTICK1_PORT);
-  private JoystickButton stopShooterButton = new JoystickButton(joystick1, 7);
-  private JoystickButton lowGoalShootButton = new JoystickButton(joystick1, 3);
-  private JoystickButton closeHighGoalButton = new JoystickButton(joystick1, 5);
-  private JoystickButton farHighGoalButton = new JoystickButton(joystick1, 4);
-  private JoystickButton launchpadGoalShoot = new JoystickButton(joystick1, 6);
-  private JoystickButton shootOne = new JoystickButton(joystick1, 2);
-  private JoystickButton shootAll = new JoystickButton(joystick1, 1);
-  private Joystick xbox = new Joystick(Constants.XBOX_PORT);
-  private final JoyStickAxisButton runInake = new JoyStickAxisButton(xbox, Constants.RUNINTAKE);
+  private Joystick joystick1 = new Joystick(Constants.FLIGHTSTICK_PORT);
+  private XboxController xbox = new XboxController(Constants.XBOX_PORT);
+
+  private JoystickButton stopShooterButton = new JoystickButton(joystick1, Constants.FLIGHTSTICK_SHOOTER_STOP_BUTTON);
+  private JoystickButton lowGoalShootButton = new JoystickButton(joystick1, Constants.FLIGHTSTICK_LOW_SHOT_BUTTON);
+  private JoystickButton closeHighGoalButton = new JoystickButton(joystick1, Constants.FLIGHTSTICK_HIGH_GOAL_BUTTON);
+  private JoystickButton farHighGoalButton = new JoystickButton(joystick1, Constants.FLIGHTSTICK_HIGH_GOAL_HARD_BUTTON);
+  private JoystickButton launchpadGoalShoot = new JoystickButton(joystick1, Constants.FLIGHTSTICK_FULL_POWER_BUTTON);
+  private JoystickButton shootOne = new JoystickButton(joystick1, Constants.FLIGHTSTICK_SHOOT_ONE_BUTTON);
+  private JoystickButton shootAll = new JoystickButton(joystick1, Constants.FLIGHTSTICK_SHOOT_ALL_BUTTON);
+  private final JoyStickAxisButton runIntake = new JoyStickAxisButton(xbox, Constants.XBOX_RUNINTAKE_BUTTON);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -66,8 +65,9 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     DriveSubsystem.getInstance().setDefaultCommand( new RunCommand(
-        () -> DriveSubsystem.getInstance().arcadeDrive(
-          -xbox.getRawAxis(1), xbox.getRawAxis(4)), 
+        () -> DriveSubsystem.getInstance().curvatureDrive(
+          -1.0 * JoystickUtils.scaleDeadband(xbox.getLeftY(), Constants.XBOX_DEADBAND) / (xbox.getLeftTriggerAxis() + 1.0)
+          , JoystickUtils.scaleDeadband(xbox.getRightX(), Constants.XBOX_DEADBAND)), 
           DriveSubsystem.getInstance()));
     
     stopShooterButton.whenPressed(new StopShooter());
@@ -77,17 +77,8 @@ public class RobotContainer {
     launchpadGoalShoot.whenPressed(new LaunchpadGoalShoot());
     shootOne.whenPressed(new ShootOne());
     shootAll.whenPressed(new ShootAll());
-    // SmartDashboard.putData("Run Ball Handler", new InstantCommand(() -> BallHandler.getInstance().moveTransitMotor(Constants.TRANSIT_MOTOR_SPEED),BallHandler.getInstance()));
-    // SmartDashboard.putData("Reverse Ball Handler", new InstantCommand(() -> BallHandler.getInstance().moveTransitMotor(-Constants.TRANSIT_MOTOR_SPEED),BallHandler.getInstance()));
-    // SmartDashboard.putData("Stop Ball Handler", new InstantCommand(() -> BallHandler.getInstance().stopTransitMotor(),BallHandler.getInstance()));
 
-    runInake.whileActiveContinuous(new RunIntake());
-    //SmartDashboard.putData("Run Intake", new InstantCommand(() ->Intake.getInstance().runIntake()));
-    // SmartDashboard.putData("Stop Intake", new InstantCommand(() -> Intake.getInstance().stopIntake()));
-    // SmartDashboard.putData("Reverse Intake", new InstantCommand(() -> Intake.getInstance().reverseIntake()));
-    // SmartDashboard.putData("Extend Intake", new InstantCommand(() -> Intake.getInstance().extendIntake()));
-    // SmartDashboard.putData("retract Intake", new InstantCommand(() -> Intake.getInstance().retractIntake()));
-
+    runIntake.whileActiveContinuous(new RunIntake());
   }
 
   /**
