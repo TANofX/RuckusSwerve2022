@@ -11,12 +11,17 @@ import java.util.spi.CurrencyNameProvider;
 import javax.net.ssl.TrustManagerFactorySpi;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsControlModule;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
@@ -38,10 +43,8 @@ public class Climber extends SubsystemBase {
       private TalonFXSensorCollection rachelRightCollection;
 
       // Pistons for Gabe's active claw and Rachel's Reach function
-      private Solenoid gabeLeftClaw;
-      private Solenoid gabeRightClaw;
-      private Solenoid rachelLeftReach;
-      private Solenoid rachelRightReach;
+      private Solenoid gabeClaw;
+      private DoubleSolenoid rachelReach;
 
       // Limit switches which will allow us to know if we are clawed on a bar for gabe
       // or rachel
@@ -122,6 +125,7 @@ public class Climber extends SubsystemBase {
       }
 
       private ClimberState currentState = ClimberState.UNKNOWN;
+      private PneumaticsControlModule pcm;
 
       private static Climber climberInstance = null;
 
@@ -133,6 +137,7 @@ public class Climber extends SubsystemBase {
       }
 
       private Climber() {
+            pcm = new PneumaticsControlModule(2);
 
             leftRachelFalcon = new WPI_TalonFX(Constants.LEFT_RACHEL_FALCON);
             rightRachelFalcon = new WPI_TalonFX(Constants.RIGHT_RACHEL_FALCON);
@@ -141,28 +146,62 @@ public class Climber extends SubsystemBase {
             rachelRightCollection = rightRachelFalcon.getSensorCollection();
             rachelLeftCollection = leftRachelFalcon.getSensorCollection();
 
-            gabeLeftClaw = new Solenoid(PneumaticsModuleType.CTREPCM, Constants.GABE_LEFT_CLAW);
-            gabeRightClaw = new Solenoid(PneumaticsModuleType.CTREPCM, Constants.GABE_RIGHT_CLAW);
-            rachelLeftReach = new Solenoid(PneumaticsModuleType.CTREPCM, Constants.RACHEL_LEFT_REACH);
-            rachelRightReach = new Solenoid(PneumaticsModuleType.CTREPCM, Constants.RACHEL_RIGHT_REACH);
+            gabeClaw = pcm.makeSolenoid(Constants.GABE_CLAW);
+            rachelReach = pcm.makeDoubleSolenoid(Constants.RACHEL_FORWARD_REACH, Constants.RACHEL_BACKWARD_REACH);
+
 
             gabeLeftIdentification = new DigitalInput(Constants.GABE_LEFT_IDENTIFICATION);
             gabeRightIndentification = new DigitalInput(Constants.GABE_RIGHT_IDENTIFICATION);
             rachelLeftBarSensor = new DigitalInput(Constants.RACHEL_LEFT_BAR_SENSOR);
             rachelRightBarSensor = new DigitalInput(Constants.RACHEL_RIGHT_BAR_SENSOR);
+
+            configureRachelMotors(leftRachelFalcon);
+            configureRachelMotors(rightRachelFalcon);
+      }
+
+      private void configureRachelMotors(WPI_TalonFX falcon) {
+            falcon.setNeutralMode(NeutralMode.Brake);
+            falcon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, Constants.CLIMBER_CURRENT_LIMIT, Constants.CLIMBER_THRESHOLD_CURRENT, Constants.CLIMBER_THRESHOLD_TIMEOUT));
+            falcon.configClosedloopRamp(1.0);
+            falcon.selectProfileSlot(0,0);
+        
+            falcon.config_kF(0, Constants.RACHEL_F, 0);
+            falcon.config_kP(0, Constants.RACHEL_P, 0);
+            falcon.config_kI(0, Constants.RACHEL_I, 0);
+            falcon.config_IntegralZone(0, 0);
+
+            falcon.config_kF(1, Constants.RACHEL_F, 0);
+            falcon.config_kP(1, Constants.RACHEL_P, 0);
+            falcon.config_kI(1, Constants.RACHEL_I, 0);
+            falcon.config_IntegralZone(1, 0);
+
+            falcon.config_kF(2, Constants.RACHEL_F, 0);
+            falcon.config_kP(2, Constants.RACHEL_P, 0);
+            falcon.config_kI(2, Constants.RACHEL_I, 0);
+            falcon.config_IntegralZone(2, 0);
+
+            falcon.config_kF(3, Constants.RACHEL_F, 0);
+            falcon.config_kP(3, Constants.RACHEL_P, 0);
+            falcon.config_kI(3, Constants.RACHEL_I, 0);
+            falcon.config_IntegralZone(3, 0);
+
+            falcon.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0,0);
+            
+        
+            falcon.setSelectedSensorPosition(0);
       }
 
       private RachelBarStates getRachelBarState() {
             if (rachelLeftBarSensor.get() && rachelRightBarSensor.get()) {
-                  if (rachelLeftReach.get() && rachelRightReach.get()) {
+                  if (rachelReach.get() == DoubleSolenoid.Value.kForward) {
                         return RachelBarStates.REACHING_BAR_CONTACT;
-                  } else if (!rachelLeftReach.get() && !rachelRightReach.get()) {
+                  } else if (rachelReach.get() == DoubleSolenoid.Value.kReverse) {
                         return RachelBarStates.NOT_REACHING_BAR_CONTACT;
                   }
             } else if (!rachelLeftBarSensor.get() && !rachelRightBarSensor.get()) {
-                  if (rachelLeftReach.get() && rachelRightReach.get()) {
+                  if (rachelReach.get() == DoubleSolenoid.Value.kForward) {
                         return RachelBarStates.REACHING_NO_BAR;
-                  } else if (!rachelLeftReach.get() && !rachelRightReach.get()) {
+                  } else if (rachelReach.get() == DoubleSolenoid.Value.kReverse) {
                         return RachelBarStates.NOT_REACHING_NO_BAR;
                   }
 
@@ -172,13 +211,13 @@ public class Climber extends SubsystemBase {
       }
 
       private GabeStates getGabeState() {
-            if (!gabeLeftClaw.get() && !gabeRightClaw.get()) {
+            if (!gabeClaw.get()) {
                   if (gabeLeftIdentification.get() && gabeRightIndentification.get()) {
                         return GabeStates.CLOSED_WITH_BAR;
                   } else if (!gabeLeftIdentification.get() && !gabeRightIndentification.get()) {
                         return GabeStates.CLOSED_WITHOUT_BAR;
                   }
-            } else if (gabeLeftClaw.get() && gabeRightClaw.get()) {
+            } else if (gabeClaw.get()) {
                   return GabeStates.OPEN;
             }
 
@@ -373,7 +412,7 @@ public class Climber extends SubsystemBase {
       }
 
       public void toggleGabe() {
-            boolean gabeClawL = gabeLeftClaw.get();
+            boolean gabeClawL = gabeClaw.get();
             if (gabeClawL) {
                   switch (currentState) {
                         case STARTING_CONFIG:
@@ -399,35 +438,41 @@ public class Climber extends SubsystemBase {
                         default:
                   }
             }
-            gabeLeftClaw.set(!gabeClawL);
-            gabeRightClaw.set(!gabeClawL);
+            gabeClaw.set(!gabeClawL);
 
       }
 
       public void gabeOpen() {
-            gabeLeftClaw.set(true);
-            gabeRightClaw.set(true);
+            gabeClaw.set(true);
+     
       }
 
       public void gabeClosed() {
-            gabeLeftClaw.set(false);
-            gabeRightClaw.set(false);
+            gabeClaw.set(false);
+    
       }
 
       public void toggleRachel() {
-            boolean rachelReachL = rachelLeftReach.get();
-            rachelLeftReach.set(!rachelReachL);
-            rachelRightReach.set(!rachelReachL);
+            DoubleSolenoid.Value rachelReachL = rachelReach.get();
+            if (rachelReachL == DoubleSolenoid.Value.kForward) {
+                  rachelReachL = DoubleSolenoid.Value.kReverse;
+            }
+            else {
+                  rachelReachL = DoubleSolenoid.Value.kForward;
+            }
+            rachelReach.set(rachelReachL);
+            
+          
       }
 
       public void rachelNoReach() {
-            rachelLeftReach.set(false);
-            rachelRightReach.set(false);
+            rachelReach.set(DoubleSolenoid.Value.kReverse);
+        
       }
 
       public void rachelReach() {
-            rachelLeftReach.set(true);
-            rachelRightReach.set(true);
+            rachelReach.set(DoubleSolenoid.Value.kForward);
+         
       }
 
       public ClimberState getCurrentState() {
@@ -475,13 +520,13 @@ public class Climber extends SubsystemBase {
       }
 
       public void fullSpeedUp() {
-            leftRachelFalcon.set(ControlMode.PercentOutput, 1.0);
-            rightRachelFalcon.set(ControlMode.PercentOutput, 1.0);
+            leftRachelFalcon.set(ControlMode.PercentOutput, .5);
+            rightRachelFalcon.set(ControlMode.PercentOutput, .5);
       }
 
       public void fullSpeedDown() {
-            leftRachelFalcon.set(ControlMode.PercentOutput, -1.0);
-            rightRachelFalcon.set(ControlMode.PercentOutput, -1.0);
+            leftRachelFalcon.set(ControlMode.PercentOutput, -.5);
+            rightRachelFalcon.set(ControlMode.PercentOutput, -.5);
       }
 
       public void fullSpeedStop() {

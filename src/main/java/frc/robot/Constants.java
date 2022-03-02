@@ -25,8 +25,8 @@ public final class Constants {
     public static  int CLIMB_TRAVERSAL_BAR = 10;
     public static  int CLIMB_HIGH_BAR = 8;
 
-    public static  int CANCEL_CLIMBER = 11;
-    public static  int CALIBRATE_CLIMBER = 9;
+    public static  int CANCEL_CLIMBER = 10;
+    public static  int CALIBRATE_CLIMBER = 12;
 
     public static int LOCK_RACHEL_MOVE_JOYSTICK = 4;
     public static int MOVE_RACHEL_AXIS = 0;
@@ -41,10 +41,9 @@ public final class Constants {
     public static int RACHEL_DOWN_LEFT_LIMIT = 2;
     public static int RACHEL_DOWN_RIGHT_LIMIT = 3;
 
-    public static int GABE_LEFT_CLAW = 4;
-    public static int GABE_RIGHT_CLAW = 5;
-    public static int RACHEL_LEFT_REACH = 6;
-    public static int RACHEL_RIGHT_REACH = 7;;
+    public static int GABE_CLAW = 1;
+    public static int RACHEL_FORWARD_REACH = 3;
+    public static int RACHEL_BACKWARD_REACH = 2;
 
     public static int GABE_LEFT_IDENTIFICATION = 8;
     public static int GABE_RIGHT_IDENTIFICATION = 11;
@@ -53,6 +52,15 @@ public final class Constants {
 
     public static int RIGHT_RACHEL_FALCON = 12;
     public static int LEFT_RACHEL_FALCON = 13;
+
+    public static double RACHEL_F = 0;
+    public static double RACHEL_I = 0;
+    public static double RACHEL_P = 0;
+
+    public static double CLIMBER_THRESHOLD_CURRENT = 60;
+    public static double CLIMBER_CURRENT_LIMIT = 39;
+    public static double CLIMBER_THRESHOLD_TIMEOUT = 0.1;
+
 
     //Constants for Climber Heights 
     public static int FULLY_EXTENDED_HEIGHT = 10;

@@ -6,8 +6,6 @@ package frc.robot;
 
 import commands.CalibrateClimber;
 import commands.CancelClimber;
-import commands.FullSpeedDown;
-import commands.FullSpeedUp;
 import commands.MoveRachelWithJoystick;
 import commands.SetClimberState;
 import commands.ToggleGabeClaw;
@@ -45,6 +43,9 @@ public class RobotContainer {
   final JoystickButton cancelClimber = new JoystickButton(m_stick, Constants.CANCEL_CLIMBER);
   final JoystickButton calibrateClimber = new JoystickButton(m_stick, Constants.CALIBRATE_CLIMBER);
   final JoystickButton lockRachelMoveJoystick = new JoystickButton(m_stick, Constants.LOCK_RACHEL_MOVE_JOYSTICK);
+  final JoystickButton driveRachelUp = new JoystickButton(m_stick, 7);
+  final JoystickButton driveRachelDown = new JoystickButton(m_stick, 11);
+  final JoystickButton stopDrivingRachel = new JoystickButton(m_stick, 9);
 
 
   /**
@@ -77,9 +78,9 @@ public class RobotContainer {
 
     lockRachelMoveJoystick.whileHeld(new MoveRachelWithJoystick(Climber.getInstance(), m_stick));
 
-    SmartDashboard.putData("Rachel UP Fast", new InstantCommand(Climber.getInstance()::fullSpeedUp,Climber.getInstance()));
-    SmartDashboard.putData("Rachel Down Fast", new InstantCommand(Climber.getInstance()::fullSpeedDown,Climber.getInstance()));
-    SmartDashboard.putData("Stop Rachel Fast", new InstantCommand(Climber.getInstance()::stopRachel,Climber.getInstance()));
+    driveRachelUp.whenPressed(new InstantCommand(Climber.getInstance()::fullSpeedUp,Climber.getInstance()));
+    driveRachelDown.whenPressed(new InstantCommand(Climber.getInstance()::fullSpeedDown,Climber.getInstance()));
+    stopDrivingRachel.whenPressed(new InstantCommand(Climber.getInstance()::stopRachel,Climber.getInstance()));
 
   }
 
