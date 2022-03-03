@@ -22,10 +22,10 @@ public final class Constants {
     public static int GABE_PNEUMATICS_BUTTON = 1;
     public static int RACHEL_REACH_PNEUMATICS_BUTTON = 2;
 
-    public static  int CLIMB_TRAVERSAL_BAR = 10;
-    public static  int CLIMB_HIGH_BAR = 8;
+ //   public static  int CLIMB_TRAVERSAL_BAR = 10;
+ //   public static  int CLIMB_HIGH_BAR = 8;
 
-    public static  int CANCEL_CLIMBER = 10;
+  //  public static  int CANCEL_CLIMBER = 10;
     public static  int CALIBRATE_CLIMBER = 12;
 
     public static int LOCK_RACHEL_MOVE_JOYSTICK = 4;
@@ -45,10 +45,10 @@ public final class Constants {
     public static int RACHEL_FORWARD_REACH = 3;
     public static int RACHEL_BACKWARD_REACH = 2;
 
-    public static int GABE_LEFT_IDENTIFICATION = 8;
-    public static int GABE_RIGHT_IDENTIFICATION = 11;
-    public static int RACHEL_LEFT_BAR_SENSOR = 9;
-    public static int RACHEL_RIGHT_BAR_SENSOR = 10;
+    public static int GABE_LEFT_IDENTIFICATION = 3;
+    public static int GABE_RIGHT_IDENTIFICATION = 2;
+    public static int RACHEL_LEFT_BAR_SENSOR = 0;
+    public static int RACHEL_RIGHT_BAR_SENSOR = 1;
 
     public static int RIGHT_RACHEL_FALCON = 12;
     public static int LEFT_RACHEL_FALCON = 13;

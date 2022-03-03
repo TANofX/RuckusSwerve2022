@@ -37,15 +37,18 @@ public class RobotContainer {
 
   final JoystickButton toggleGabe = new JoystickButton(m_stick, Constants.GABE_PNEUMATICS_BUTTON);
   final JoystickButton toggleRachel = new JoystickButton(m_stick, Constants.RACHEL_REACH_PNEUMATICS_BUTTON);
-  final JoystickButton highClimb = new JoystickButton(m_stick, Constants.CLIMB_HIGH_BAR);
-  final JoystickButton traversalClimb = new JoystickButton(m_stick, Constants.CLIMB_TRAVERSAL_BAR);
+//  final JoystickButton highClimb = new JoystickButton(m_stick, Constants.CLIMB_HIGH_BAR);
+//  final JoystickButton traversalClimb = new JoystickButton(m_stick, Constants.CLIMB_TRAVERSAL_BAR);
 
-  final JoystickButton cancelClimber = new JoystickButton(m_stick, Constants.CANCEL_CLIMBER);
+//  final JoystickButton cancelClimber = new JoystickButton(m_stick, Constants.CANCEL_CLIMBER);
   final JoystickButton calibrateClimber = new JoystickButton(m_stick, Constants.CALIBRATE_CLIMBER);
   final JoystickButton lockRachelMoveJoystick = new JoystickButton(m_stick, Constants.LOCK_RACHEL_MOVE_JOYSTICK);
   final JoystickButton driveRachelUp = new JoystickButton(m_stick, 7);
   final JoystickButton driveRachelDown = new JoystickButton(m_stick, 11);
   final JoystickButton stopDrivingRachel = new JoystickButton(m_stick, 9);
+
+  final JoystickButton rachelUpFullSpeed = new JoystickButton(m_stick, 8);
+  final JoystickButton rachelStop = new JoystickButton(m_stick, 10);
 
 
   /**
@@ -70,17 +73,20 @@ public class RobotContainer {
     toggleGabe.whenPressed(new ToggleGabeClaw());
     toggleRachel.whenPressed(new ToggleRachelReach());
 
-    highClimb.whenPressed(getHighClimbCommand());
-    traversalClimb.whenPressed(getTraversalClimbCommand());
+  //  highClimb.whenPressed(getHighClimbCommand());
+  //  traversalClimb.whenPressed(getTraversalClimbCommand());
 
-    cancelClimber.whenPressed(new CancelClimber());
+   // cancelClimber.whenPressed(new CancelClimber());
     calibrateClimber.whenPressed(new CalibrateClimber());
 
     lockRachelMoveJoystick.whileHeld(new MoveRachelWithJoystick(Climber.getInstance(), m_stick));
 
-    driveRachelUp.whenPressed(new InstantCommand(Climber.getInstance()::fullSpeedUp,Climber.getInstance()));
-    driveRachelDown.whenPressed(new InstantCommand(Climber.getInstance()::fullSpeedDown,Climber.getInstance()));
-    stopDrivingRachel.whenPressed(new InstantCommand(Climber.getInstance()::stopRachel,Climber.getInstance()));
+    driveRachelUp.whenPressed(new InstantCommand(()->Climber.getInstance().moveRachelPosition(Climber.RachelExtensionStates.FULLY_EXTENDED),Climber.getInstance()));
+    driveRachelDown.whenPressed(new InstantCommand(()->Climber.getInstance().moveRachelPosition(Climber.RachelExtensionStates.GABE_HEIGHT),Climber.getInstance()));
+    stopDrivingRachel.whenPressed(new InstantCommand(()->Climber.getInstance().moveRachelPosition(Climber.RachelExtensionStates.TRUST_FALL_LOCATION),Climber.getInstance()));
+
+    rachelUpFullSpeed.whenPressed(new InstantCommand(Climber.getInstance()::fullSpeedDown,Climber.getInstance()));
+    rachelStop.whenPressed(new InstantCommand(Climber.getInstance()::stopRachel,Climber.getInstance()));
 
   }
 

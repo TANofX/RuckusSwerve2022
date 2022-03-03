@@ -82,20 +82,20 @@ public class Climber extends SubsystemBase {
 
       // None of the "expectecPosition" values are correct. They will need to be
       // determined experimentally
-      private static enum RachelExtensionStates {
+      public static enum RachelExtensionStates {
             FULLY_RETRACTED(0),
-            GABE_HEIGHT(1000),
-            FULLY_EXTENDED(6000),
-            TRUST_FALL_LOCATION(5000),
-            RELEASE_REACH(1300),
-            REACH_EXTENSION(5500),
-            FIRST_REACH_EXTENSION(4500),
+            GABE_HEIGHT(15000),
+            FULLY_EXTENDED(147900),
+            TRUST_FALL_LOCATION(70000),
+            RELEASE_REACH(25000),
+            REACH_EXTENSION(147900),
+            FIRST_REACH_EXTENSION(147900),
             UNKNOWN(-100000),
             EXTENDING(-100001),
             RETRACTING(-100002);
 
             private double expectedPosition;
-            private static double allowedPositionError = 10.0;
+            private static double allowedPositionError = 400.0;
 
             private RachelExtensionStates(double encoderPosition) {
                   expectedPosition = encoderPosition;
@@ -165,43 +165,51 @@ public class Climber extends SubsystemBase {
             falcon.configClosedloopRamp(1.0);
             falcon.selectProfileSlot(0,0);
         
-            falcon.config_kF(0, Constants.RACHEL_F, 0);
-            falcon.config_kP(0, Constants.RACHEL_P, 0);
+            falcon.config_kF(0, 0.031, 0);
+            falcon.config_kP(0, 0.2, 0);
             falcon.config_kI(0, Constants.RACHEL_I, 0);
             falcon.config_IntegralZone(0, 0);
 
-            falcon.config_kF(1, Constants.RACHEL_F, 0);
-            falcon.config_kP(1, Constants.RACHEL_P, 0);
+            falcon.config_kF(1, 0.034, 0);
+            falcon.config_kP(1, 0.06, 0);
             falcon.config_kI(1, Constants.RACHEL_I, 0);
             falcon.config_IntegralZone(1, 0);
 
-            falcon.config_kF(2, Constants.RACHEL_F, 0);
-            falcon.config_kP(2, Constants.RACHEL_P, 0);
+            falcon.config_kF(2, 0.028, 0);
+            falcon.config_kP(2, 0.06, 0);
             falcon.config_kI(2, Constants.RACHEL_I, 0);
             falcon.config_IntegralZone(2, 0);
 
-            falcon.config_kF(3, Constants.RACHEL_F, 0);
-            falcon.config_kP(3, Constants.RACHEL_P, 0);
+            falcon.config_kF(3, 0.043, 0);
+            falcon.config_kP(3, 0.1, 0);
             falcon.config_kI(3, Constants.RACHEL_I, 0);
             falcon.config_IntegralZone(3, 0);
 
+            falcon.configMotionCruiseVelocity(9000);
+            falcon.configMotionAcceleration(9000);
+
             falcon.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0,0);
             
+            falcon.selectProfileSlot(3, 0);
+            falcon.configForwardSoftLimitThreshold(RachelExtensionStates.FULLY_EXTENDED.getMotorTarget() + 10);
+            falcon.configReverseSoftLimitThreshold(0);
+            falcon.configForwardSoftLimitEnable(true);
+            falcon.configReverseSoftLimitEnable(true);
         
             falcon.setSelectedSensorPosition(0);
       }
 
       private RachelBarStates getRachelBarState() {
             if (rachelLeftBarSensor.get() && rachelRightBarSensor.get()) {
-                  if (rachelReach.get() == DoubleSolenoid.Value.kForward) {
+                  if (rachelReach.get() == DoubleSolenoid.Value.kReverse) {
                         return RachelBarStates.REACHING_BAR_CONTACT;
-                  } else if (rachelReach.get() == DoubleSolenoid.Value.kReverse) {
+                  } else if (rachelReach.get() == DoubleSolenoid.Value.kForward) {
                         return RachelBarStates.NOT_REACHING_BAR_CONTACT;
                   }
             } else if (!rachelLeftBarSensor.get() && !rachelRightBarSensor.get()) {
-                  if (rachelReach.get() == DoubleSolenoid.Value.kForward) {
+                  if (rachelReach.get() == DoubleSolenoid.Value.kReverse) {
                         return RachelBarStates.REACHING_NO_BAR;
-                  } else if (rachelReach.get() == DoubleSolenoid.Value.kReverse) {
+                  } else if (rachelReach.get() == DoubleSolenoid.Value.kForward) {
                         return RachelBarStates.NOT_REACHING_NO_BAR;
                   }
 
@@ -212,9 +220,9 @@ public class Climber extends SubsystemBase {
 
       private GabeStates getGabeState() {
             if (!gabeClaw.get()) {
-                  if (gabeLeftIdentification.get() && gabeRightIndentification.get()) {
+                  if (!gabeLeftIdentification.get() && !gabeRightIndentification.get()) {
                         return GabeStates.CLOSED_WITH_BAR;
-                  } else if (!gabeLeftIdentification.get() && !gabeRightIndentification.get()) {
+                  } else if (gabeLeftIdentification.get() && gabeRightIndentification.get()) {
                         return GabeStates.CLOSED_WITHOUT_BAR;
                   }
             } else if (gabeClaw.get()) {
@@ -466,12 +474,12 @@ public class Climber extends SubsystemBase {
       }
 
       public void rachelNoReach() {
-            rachelReach.set(DoubleSolenoid.Value.kReverse);
+            rachelReach.set(DoubleSolenoid.Value.kForward);
         
       }
 
       public void rachelReach() {
-            rachelReach.set(DoubleSolenoid.Value.kForward);
+            rachelReach.set(DoubleSolenoid.Value.kReverse);
          
       }
 
@@ -480,17 +488,17 @@ public class Climber extends SubsystemBase {
       }
 
       public double getRachelVelocity() {
-            return (rightRachelFalcon.getSelectedSensorVelocity() + leftRachelFalcon.getSelectedSensorVelocity() / 2);
+            return (rightRachelFalcon.getSelectedSensorVelocity() + leftRachelFalcon.getSelectedSensorVelocity()) / 2.0;
       }
 
       public double getRachelPosition() {
-            return (rightRachelFalcon.getSelectedSensorPosition() + leftRachelFalcon.getSelectedSensorPosition() / 2);
+            return (rightRachelFalcon.getSelectedSensorPosition() + leftRachelFalcon.getSelectedSensorPosition()) / 2.0;
       }
 
       public void moveRachelPosition(double position) {
             double rachelPosition = position;
-            leftRachelFalcon.set(ControlMode.Position, rachelPosition);
-            rightRachelFalcon.set(ControlMode.Position, rachelPosition);
+            leftRachelFalcon.set(ControlMode.MotionMagic, rachelPosition);
+            rightRachelFalcon.set(ControlMode.MotionMagic, rachelPosition);
             SmartDashboard.putNumber("Move Rachel To Position", rachelPosition);
       }
 
@@ -503,20 +511,28 @@ public class Climber extends SubsystemBase {
             rightRachelFalcon.setSelectedSensorPosition(0);
       }
 
+      private void enableRachelSoftLimit(boolean enable) {
+            rightRachelFalcon.configReverseSoftLimitEnable(enable);
+            leftRachelFalcon.configReverseSoftLimitEnable(enable);
+      }
+
       public boolean calibrateClimber() {
+            enableRachelSoftLimit(false);
             if (!isRachelBottomLimit()) {
                   moveRachelDown();
             }
             else {calibrateRachel();
             gabeClosed();
+            rachelNoReach();
+            enableRachelSoftLimit(true);
             return true;
             }
             return false;
       }
 
       public void moveRachelDown() {
-            leftRachelFalcon.set(ControlMode.PercentOutput, -0.1);
-            rightRachelFalcon.set(ControlMode.PercentOutput, -0.1);
+            leftRachelFalcon.set(ControlMode.PercentOutput, -0.3);
+            rightRachelFalcon.set(ControlMode.PercentOutput, -0.3);
       }
 
       public void fullSpeedUp() {
