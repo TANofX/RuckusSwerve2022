@@ -95,7 +95,7 @@ public class Climber extends SubsystemBase {
             RETRACTING(-100002);
 
             private double expectedPosition;
-            private static double allowedPositionError = 400.0;
+            private static double allowedPositionError = Constants.CLIMB_HEIGHT_THRESHOLD;
 
             private RachelExtensionStates(double encoderPosition) {
                   expectedPosition = encoderPosition;
@@ -185,8 +185,8 @@ public class Climber extends SubsystemBase {
             falcon.config_kI(3, Constants.RACHEL_I, 0);
             falcon.config_IntegralZone(3, 0);
 
-            falcon.configMotionCruiseVelocity(9000);
-            falcon.configMotionAcceleration(9000);
+            falcon.configMotionCruiseVelocity(Constants.CLIMBER_MAX_VELOCITY);
+            falcon.configMotionAcceleration(Constants.CLIMBER_MAX_VELOCITY / 2.0);
 
             falcon.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0,0);
             
