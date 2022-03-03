@@ -16,6 +16,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
  */
 public final class Constants {
 
+    // Shooter Constants
     public static final int SHOOTER_CURRENT_LIMIT = 39;
     public static final int SHOOTER_THRESHOLD_CURRENT = 60;
     public static final double SHOOTER_THRESHOLD_TIMEOUT = 0.01;
@@ -24,22 +25,39 @@ public final class Constants {
     public static final double SHOOTER_I = 0.0001;//0.00125;
     public static final double SHOOTER_SPEED = 0.9;
     public static final double SHOOTER_SPIN_ERROR = 80;
-    public static final int JOYSTICK1_PORT = 1;
+    public static final int PRIMARY_SHOOTER_ID = 10;
+    public static final int SECONDARY_SHOOTER_ID = 11;
+
+    // Cargo (Ball) Handler Constants
     public static final int HANDLERSENSOR_1_PORT = 0;
     public static final int HANDLERSENSOR_2_PORT = 1;
     public static final int HANDLERSENSOR_3_PORT = 2;
     public static final int HANDLERSENSOR_4_PORT = 3;
+    public static final int TRANSIT_MOTOR_ID = 8;
+    public static final double TRANSIT_MOTOR_SPEED = -0.5;
+    public static final double CLEAR_TIMEOUT = 2.0;
+
+    // Intake Constants
     public static final int INTAKE_SOLENOID_PORT = 0;
     public static final int DETECTABLE_DISTANCE = 250;
     public static final double REVERSE_INTAKE_TIMEOUT = 1.0;
-    public static final int PRIMARY_SHOOTER_ID = 10;
-    public static final int SECONDARY_SHOOTER_ID = 11;
-    public static final int TRANSIT_MOTOR_ID = 8;
     public static final int INTAKE_MOTOR_ID = 9;
-    public static final double TRANSIT_MOTOR_SPEED = -1;
     public static final double INTAKE_SPEED = 0.5;
+
+    // Xbox Constants
     public static final int XBOX_PORT = 0;
-    public static final int RUNINTAKE = 3;
+    public static final int XBOX_RUNINTAKE_BUTTON = 3;
+    public static final double XBOX_DEADBAND = 0.15;
+
+    // Flight Stick Constants
+    public static final int FLIGHTSTICK_PORT = 1;
+    public static final int FLIGHTSTICK_SHOOT_ALL_BUTTON = 1;
+    public static final int FLIGHTSTICK_SHOOT_ONE_BUTTON = 2;
+    public static final int FLIGHTSTICK_SHOOTER_STOP_BUTTON = 7;
+    public static final int FLIGHTSTICK_LOW_SHOT_BUTTON = 3;
+    public static final int FLIGHTSTICK_HIGH_GOAL_BUTTON = 5;
+    public static final int FLIGHTSTICK_HIGH_GOAL_HARD_BUTTON = 4;
+    public static final int FLIGHTSTICK_FULL_POWER_BUTTON = 6;
 
     public static final class DriveConstants {
         public static final int kLeftMotor1Port = 4;
@@ -78,6 +96,10 @@ public final class Constants {
     
         // Example value only - as above, this must be tuned for your drive!
         public static final double kPDriveVel = 0.29187;
+        public static final double kMinimumTurnRate = 0.15;
+        public static final double kThresholdCurrent = 120.0;
+        public static final double kThresholdTimeout = 0.5;
+        public static final double kCurrentLimit = 40.0;
       }
     
       public static final class OIConstants {
