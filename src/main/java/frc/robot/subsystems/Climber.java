@@ -84,12 +84,10 @@ public class Climber extends SubsystemBase {
       // determined experimentally
       public static enum RachelExtensionStates {
             FULLY_RETRACTED(0),
-            GABE_HEIGHT(15000),
-            FULLY_EXTENDED(147900),
+            GABE_HEIGHT(-3500),
+            FULLY_EXTENDED(150000),
             TRUST_FALL_LOCATION(70000),
             RELEASE_REACH(25000),
-            REACH_EXTENSION(147900),
-            FIRST_REACH_EXTENSION(147900),
             UNKNOWN(-100000),
             EXTENDING(-100001),
             RETRACTING(-100002);
@@ -181,7 +179,7 @@ public class Climber extends SubsystemBase {
             falcon.config_IntegralZone(2, 0);
 
             falcon.config_kF(3, 0.043, 0);
-            falcon.config_kP(3, 0.1, 0);
+            falcon.config_kP(3, 0.15, 0);
             falcon.config_kI(3, Constants.RACHEL_I, 0);
             falcon.config_IntegralZone(3, 0);
 
@@ -193,8 +191,8 @@ public class Climber extends SubsystemBase {
             falcon.selectProfileSlot(3, 0);
             falcon.configForwardSoftLimitThreshold(RachelExtensionStates.FULLY_EXTENDED.getMotorTarget() + 10);
             falcon.configReverseSoftLimitThreshold(0);
-            falcon.configForwardSoftLimitEnable(true);
-            falcon.configReverseSoftLimitEnable(true);
+        //    falcon.configForwardSoftLimitEnable(true);
+        //    falcon.configReverseSoftLimitEnable(true);
         
             falcon.setSelectedSensorPosition(0);
       }
@@ -292,7 +290,7 @@ public class Climber extends SubsystemBase {
                                                 break;
                                     }
                                     break;
-                              case FIRST_REACH_EXTENSION:
+                              case FULLY_EXTENDED:
                                     switch (currentRachelBar) {
                                           case NOT_REACHING_NO_BAR:
                                                 currentState = ClimberState.BABYS_FIRST_REACH;
@@ -365,7 +363,7 @@ public class Climber extends SubsystemBase {
                                                 break;
                                     }
                                     break;
-                              case REACH_EXTENSION:
+                              case FULLY_EXTENDED:
                                     switch (currentRachelBar) {
                                           case REACHING_NO_BAR:
                                                 currentState = ClimberState.BRONTOSAURUS_REACHING;
@@ -507,8 +505,8 @@ public class Climber extends SubsystemBase {
       }
 
       public void calibrateRachel() {
-            leftRachelFalcon.setSelectedSensorPosition(0);
-            rightRachelFalcon.setSelectedSensorPosition(0);
+            leftRachelFalcon.setSelectedSensorPosition(3000);
+            rightRachelFalcon.setSelectedSensorPosition(3000);
       }
 
       private void enableRachelSoftLimit(boolean enable) {
@@ -524,7 +522,7 @@ public class Climber extends SubsystemBase {
             else {calibrateRachel();
             gabeClosed();
             rachelNoReach();
-            enableRachelSoftLimit(true);
+            enableRachelSoftLimit(false);
             return true;
             }
             return false;
@@ -620,7 +618,7 @@ public class Climber extends SubsystemBase {
                   case REACHING:
                         throw new IllegalStateException();
                   case BABYS_FIRST_REACH:
-                        moveRachelPosition(RachelExtensionStates.FIRST_REACH_EXTENSION);
+                        moveRachelPosition(RachelExtensionStates.FULLY_EXTENDED);
                         gabeOpen();
                         rachelNoReach();
                         break;
@@ -647,12 +645,12 @@ public class Climber extends SubsystemBase {
                   case STEGOSAURUS_REACHING:
                         throw new IllegalStateException();
                   case BRONTOSAURUS_REACHING:
-                        moveRachelPosition(RachelExtensionStates.REACH_EXTENSION);
+                        moveRachelPosition(RachelExtensionStates.FULLY_EXTENDED);
                         gabeClosed();
                         rachelReach();
                         break;
                   case REACH_PULL:
-                        moveRachelPosition(RachelExtensionStates.REACH_EXTENSION);
+                        moveRachelPosition(RachelExtensionStates.FULLY_EXTENDED);
                         gabeClosed();
                         rachelNoReach();
                         break;

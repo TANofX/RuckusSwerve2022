@@ -48,7 +48,7 @@ public class MoveRachelWithJoystick extends CommandBase {
 
     double currentPosition = climber.getRachelPosition();
     double targetVelocity = climber.getMaxVelicity() * joystick.getRawAxis(Constants.MOVE_RACHEL_AXIS);
-    double targetPosition = currentPosition + targetVelocity / 100 * averageFrameTime * 2;
+    double targetPosition = currentPosition + targetVelocity * averageFrameTime * 2;
     
     climber.moveRachelPosition(targetPosition);
   }

@@ -28,7 +28,7 @@ public class ClearBallHandler extends CommandBase {
     clearTimer.reset();
     clearTimer.start();
     Shooter.getInstance().startShooter(ShooterSpeeds.LOWGOAL);
-    BallHandler.getInstance().moveTransitMotor(1.0);
+    BallHandler.getInstance().moveTransitMotor(Constants.TRANSIT_MOTOR_SPEED);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -40,6 +40,7 @@ public class ClearBallHandler extends CommandBase {
   public void end(boolean interrupted) {
     Shooter.getInstance().stopShooter();
     BallHandler.getInstance().stopTransitMotor();
+    BallHandler.getInstance().reset();
   }
 
   // Returns true when the command should end.

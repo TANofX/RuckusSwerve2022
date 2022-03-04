@@ -10,6 +10,7 @@ import commands.MoveRachelWithJoystick;
 import commands.SetClimberState;
 import commands.ToggleGabeClaw;
 import commands.ToggleRachelReach;
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -17,11 +18,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Climber.ClimberState;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.commands.ClearBallHandler;
 import frc.commands.CloseHighGoalShoot;
 import frc.commands.DefaultBallHandler;
 import frc.commands.FarHighGoalShoot;
@@ -70,12 +73,14 @@ public class RobotContainer {
   final JoystickButton calibrateClimber = new JoystickButton(m_stick, Constants.FLIGHTSTICK_CALIBRATE_CLIMBER_BUTTON);
   final JoystickButton lockRachelMoveJoystick = new JoystickButton(m_stick, Constants.FLIGHTSTICK_LOCK_RACHEL_MOVE_JOYSTICK_BUTTON);
 
-  private final HatSwitchButton prepareClimbButton = JoystickUtils.getHatSwitchButton(m_stick, Constants.FLIGHTSTICK_HAT_PREPARE_TO_CLIMB_DIRECTION);
-  private final HatSwitchButton simpleClimbButton = JoystickUtils.getHatSwitchButton(m_stick, Constants.FLIGHTSTICK_HAT_SIMPLE_CLIMB_DIRECTION);
+ // private final HatSwitchButton prepareClimbButton = JoystickUtils.getHatSwitchButton(m_stick, Constants.FLIGHTSTICK_HAT_PREPARE_TO_CLIMB_DIRECTION);
+ // private final HatSwitchButton simpleClimbButton = JoystickUtils.getHatSwitchButton(m_stick, Constants.FLIGHTSTICK_HAT_SIMPLE_CLIMB_DIRECTION);
 
   private final JoyStickAxisButton runIntake = new JoyStickAxisButton(m_xbox, Constants.XBOX_RUNINTAKE_BUTTON);
   private JoystickButton prepareClimbXbox = new JoystickButton(m_xbox, XboxController.Button.kA.value);
-
+  private JoystickButton clearShooterXbox = new JoystickButton(m_xbox, XboxController.Button.kStart.value);
+  private JoystickButton highBarXbox = new JoystickButton(m_xbox, XboxController.Button.kX.value);
+  private JoystickButton traversalXbox = new JoystickButton(m_xbox, XboxController.Button.kB.value);
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -107,6 +112,7 @@ public class RobotContainer {
 
    // cancelClimber.whenPressed(new CancelClimber());
     calibrateClimber.whenPressed(new CalibrateClimber());
+    clearShooterXbox.whenPressed(new ClearBallHandler());
 
     lockRachelMoveJoystick.whileHeld(new MoveRachelWithJoystick(Climber.getInstance(), m_stick));
 
@@ -128,8 +134,12 @@ public class RobotContainer {
     runIntake.whileActiveContinuous(new RunIntake());
     
     prepareClimbXbox.whenPressed(new SetClimberState(ClimberState.BABYS_FIRST_REACH));
-    prepareClimbButton.whenPressed(new SetClimberState(ClimberState.BABYS_FIRST_REACH));
-    simpleClimbButton.whenPressed(getSimpleClimbCommand());
+    highBarXbox.whenPressed(getHighClimbCommand());
+    traversalXbox.whenPressed(getTraversalClimbCommand());
+    
+ //   prepareClimbButton.whenPressed(new SetClimberState(ClimberState.BABYS_FIRST_REACH));
+  //  simpleClimbButton.whenPressed(getSimpleClimbCommand());
+    SmartDashboard.putData("simple climb", (Sendable) getSimpleClimbCommand());
   }
 
   /**
@@ -149,6 +159,7 @@ public class RobotContainer {
         new SetClimberState(ClimberState.SUCCESSFULL_HANG),
         new SetClimberState(ClimberState.T_REX_REACH),
         new SetClimberState(ClimberState.BRONTOSAURUS_REACHING),
+        new WaitCommand(1.0),
         new SetClimberState(ClimberState.REACH_PULL),
         new SetClimberState(ClimberState.REACH_CAUGHT),
         new SetClimberState(ClimberState.TRUST_FALL));
@@ -161,6 +172,7 @@ public class RobotContainer {
         new SetClimberState(ClimberState.SUCCESSFULL_HANG),
         new SetClimberState(ClimberState.T_REX_REACH),
         new SetClimberState(ClimberState.BRONTOSAURUS_REACHING),
+        new WaitCommand(1.0),
         new SetClimberState(ClimberState.REACH_PULL),
         new SetClimberState(ClimberState.REACH_CAUGHT),
         new SetClimberState(ClimberState.TRUST_FALL),
@@ -168,6 +180,7 @@ public class RobotContainer {
         new SetClimberState(ClimberState.SUCCESSFULL_HANG),
         new SetClimberState(ClimberState.T_REX_REACH),
         new SetClimberState(ClimberState.BRONTOSAURUS_REACHING),
+        new WaitCommand(1.0),
         new SetClimberState(ClimberState.REACH_PULL),
         new SetClimberState(ClimberState.REACH_CAUGHT),
         new SetClimberState(ClimberState.TRUST_FALL));

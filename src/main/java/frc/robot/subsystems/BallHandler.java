@@ -204,7 +204,7 @@ public class BallHandler extends SubsystemBase {
       if (secondSensor.isTriggered() && (currentState == HandlerState.ONEBALLINTAKE)) {
         currentState = HandlerState.ONEBALLREADY;
       }
-      if (firstSensor.isTriggered()  && (currentState == HandlerState.ONEBALLREADY)) {
+      if (firstSensor.isTriggered() && (currentState == HandlerState.ONEBALLREADY)) {
         currentState = HandlerState.TWOBALLINTAKE;
       }
       if (thirdSensor.isTriggered() && (currentState == HandlerState.TWOBALLINTAKE)) {
@@ -214,7 +214,8 @@ public class BallHandler extends SubsystemBase {
         currentState = HandlerState.ONEBALLINTAKE;
       }
     } else {
-      if (thirdSensor.isTriggered() && ((currentState == HandlerState.ONEBALLREADY) || (currentState == HandlerState.ONEBALLSHOT))) {
+      if (thirdSensor.isTriggered()
+          && ((currentState == HandlerState.ONEBALLREADY) || (currentState == HandlerState.ONEBALLSHOT))) {
         currentState = HandlerState.ONEBALLREADYTOSHOOT;
       }
       if (!thirdSensor.isTriggered() && (currentState == HandlerState.ONEBALLSHOOT)) {
@@ -232,5 +233,9 @@ public class BallHandler extends SubsystemBase {
       handlerInstance = new BallHandler();
     }
     return handlerInstance;
+  }
+
+  public void reset() {
+    currentState = HandlerState.EMPTY;
   }
 }
