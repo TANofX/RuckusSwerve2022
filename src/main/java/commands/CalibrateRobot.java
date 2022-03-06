@@ -5,12 +5,13 @@
 package commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.BallHandler;
 import frc.robot.subsystems.Climber;
 
-public class CalibrateClimber extends CommandBase {
+public class CalibrateRobot extends CommandBase {
   /** Creates a new CalibrateClimber. */
   
-  public CalibrateClimber() {
+  public CalibrateRobot() {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(Climber.getInstance());
   }
@@ -25,7 +26,9 @@ public class CalibrateClimber extends CommandBase {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    BallHandler.getInstance().reset();
+  }
 
   // Returns true when the command should end.
   @Override

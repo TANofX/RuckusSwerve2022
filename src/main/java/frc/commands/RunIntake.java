@@ -39,8 +39,8 @@ public class RunIntake extends CommandBase {
     if (checkReject) {
       if (rejectTimer.hasElapsed(Constants.REVERSE_INTAKE_TIMEOUT)) {
         checkReject = false;
+        Intake.getInstance().stopIntake();
         Intake.getInstance().runIntake();
-    
       }
     }
     else {

@@ -23,6 +23,9 @@ public class ShootAll extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if (!BallHandler.getInstance().shooterActivation()) {
+      return;
+    }
     if (Shooter.getInstance().correctSpeed()) {
       BallHandler.getInstance().shoot();
     }
@@ -38,7 +41,10 @@ public class ShootAll extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return BallHandler.getInstance().getState() == HandlerState.EMPTY;
+    if (!BallHandler.getInstance().shooterActivation()) {
+      return true;
+    }
+    return (BallHandler.getInstance().getState() == HandlerState.EMPTY) && (Shooter.getInstance().correctSpeed());
    //return (Shooter.getInstance().correctSpeed() && (BallHandler.getInstance().getState() == HandlerState.EMPTY));
   }
 }

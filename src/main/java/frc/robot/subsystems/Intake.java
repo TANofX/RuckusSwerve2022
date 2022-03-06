@@ -29,13 +29,18 @@ public class Intake extends SubsystemBase {
   private Color blueTarget = new Color(0.169, 0.405, 0.426);
   private Color redTarget = new Color(0.528, 0.347, 0.126);
   private Color allianceColor;
+  private boolean useColorSensor = true;
   private PneumaticsControlModule pcm;
   private boolean intakeExtended = false;
+  private boolean intakeRunning = false;
+
+  private double[] rawColorArray = new double[4];
 
   public Intake() {
     pcm = new PneumaticsControlModule(2);
     solenoid = pcm.makeSolenoid(Constants.INTAKE_SOLENOID_PORT);
-    //solenoid = new Solenoid(PneumaticsModuleType.CTREPCM, Constants.INTAKE_SOLENOID_PORT);
+    // solenoid = new Solenoid(PneumaticsModuleType.CTREPCM,
+    // Constants.INTAKE_SOLENOID_PORT);
     colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
     colorMatcher.addColorMatch(blueTarget);
     colorMatcher.addColorMatch(redTarget);
@@ -47,20 +52,16 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    RawColor rawColor = colorSensor.getRawColor();
-    double[] rawColorArray = new double[4];
 
-    rawColorArray[0] = rawColor.red;
-    rawColorArray[1] = rawColor.green;
-    rawColorArray[2] = rawColor.blue;
-    rawColorArray[3] = rawColor.ir;
-    SmartDashboard.putNumberArray("sensorColor", rawColorArray);
-    SmartDashboard.putNumber("Proximity", colorSensor.getProximity());
   }
 
   public boolean checkColor(DriverStation.Alliance ourAlliance) {
     int greaterIndex = 1;
     int lessIndex = 4;
+    SmartDashboard.putBoolean("use color", useColorSensor);
+    if (!useColorSensor) {
+      return true;
+    }
 
     switch (ourAlliance) {
       case Red:
@@ -76,18 +77,17 @@ public class Intake extends SubsystemBase {
       default:
         allianceColor = Color.kBlack;
     }
-    RawColor rawColor = colorSensor.getRawColor();
-    double[] rawColorArray = new double[4];
 
-    rawColorArray[0] = rawColor.red;
-    rawColorArray[1] = rawColor.green;
-    rawColorArray[2] = rawColor.blue;
-    rawColorArray[3] = rawColor.ir;
-    //Color detectedColor = colorSensor.getColor();
-    //ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
-   
+    // Color detectedColor = colorSensor.getColor();
+    // ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
 
     if (colorSensor.getProximity() >= Constants.DETECTABLE_DISTANCE) {
+      RawColor rawColor = colorSensor.getRawColor();
+
+      rawColorArray[0] = rawColor.red;
+      rawColorArray[1] = rawColor.green;
+      rawColorArray[2] = rawColor.blue;
+      rawColorArray[3] = rawColor.ir;
       if (rawColorArray[greaterIndex] < 650) {
         return true;
       }
@@ -101,13 +101,27 @@ public class Intake extends SubsystemBase {
 
   }
 
+  public void useColorSensor(boolean colorOn) {
+    useColorSensor = colorOn;
+  }
+
+  public void toggleColorSensor() {
+    useColorSensor = !useColorSensor;
+  }
+
   public void runIntake() {
-    intakeMotor.set(Constants.INTAKE_SPEED);
+    if (!intakeRunning) {
+      intakeMotor.set(Constants.INTAKE_SPEED);
+      intakeRunning = true;
+    }
 
   }
 
   public void stopIntake() {
-    intakeMotor.stopMotor();
+    if (intakeRunning) {
+      intakeMotor.stopMotor();
+      intakeRunning = false;
+    }
   }
 
   public void reverseIntake() {
@@ -126,7 +140,7 @@ public class Intake extends SubsystemBase {
 
   public boolean isIntakeExtended() {
     return intakeExtended;
-    
+
   }
 
   public static Intake getInstance() {

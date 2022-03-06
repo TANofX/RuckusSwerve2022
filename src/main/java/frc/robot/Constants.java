@@ -110,7 +110,7 @@ public final class Constants {
     public static final int DETECTABLE_DISTANCE = 250;
     public static final double REVERSE_INTAKE_TIMEOUT = 1.0;
     public static final int INTAKE_MOTOR_ID = 9;
-    public static final double INTAKE_SPEED = 0.5;
+    public static final double INTAKE_SPEED = 0.45;
 
     // Xbox Constants
     public static final int XBOX_PORT = 0;
@@ -134,7 +134,7 @@ public final class Constants {
     
         public static final int kEncoderCPR = 2048;
         public static final double kWheelDiameterMeters = 0.15;
-        public static final double kGearBoxRatio = 12.727;
+        public static final double kGearBoxRatio = 1.0 / 12.727;
         // Need gear ratio for test bed
         // 12.727
         public static final double kEncoderDistancePerPulse =
@@ -155,8 +155,8 @@ public final class Constants {
         // Example value only - as above, this must be tuned for your drive!
         public static final double kPDriveVel = 0.29187;
         public static final double kMinimumTurnRate = 0.15;
-        public static final double kThresholdCurrent = 120.0;
-        public static final double kThresholdTimeout = 0.5;
+        public static final double kThresholdCurrent = 40.0;
+        public static final double kThresholdTimeout = 0.1;
         public static final double kCurrentLimit = 40.0;
       }
     

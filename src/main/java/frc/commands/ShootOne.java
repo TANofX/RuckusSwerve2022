@@ -33,6 +33,9 @@ public class ShootOne extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+   if (!BallHandler.getInstance().shooterActivation()) {
+     return;
+   }
     if (Shooter.getInstance().correctSpeed() && !shot) {
       BallHandler.getInstance().shoot();
       shot = true;
@@ -49,6 +52,9 @@ public class ShootOne extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if (!BallHandler.getInstance().shooterActivation()) {
+      return true;
+    }
    return (Shooter.getInstance().correctSpeed() && (BallHandler.getInstance().getState() == targetState));
   }
 }

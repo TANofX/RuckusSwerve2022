@@ -46,12 +46,7 @@ public class DriveSubsystem extends SubsystemBase {
   // DriveConstants.kRightEncoderPorts[1],
   // DriveConstants.kRightEncoderReversed);
 
-  // The gyro sensor
-  // private final Gyro m_gyro = new ADXRS450_Gyro();
-  private final WPI_PigeonIMU m_gyro = new WPI_PigeonIMU(43);
-
-  // Odometry class for tracking robot pose
-  private final DifferentialDriveOdometry m_odometry;
+ 
 
   /** Creates a new DriveSubsystem. */
   private DriveSubsystem() {
@@ -82,52 +77,24 @@ public class DriveSubsystem extends SubsystemBase {
     // m_rightEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
 
     resetEncoders();
-    zeroHeading();
-    m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d());
   }
 
   private void configureDriveMotor(WPI_TalonFX motor) {
+    motor.configVoltageCompSaturation(9.0);
+    motor.enableVoltageCompensation(true);
     motor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 
                                                                         Constants.DriveConstants.kCurrentLimit, 
                                                                         Constants.DriveConstants.kThresholdCurrent, 
                                                                         Constants.DriveConstants.kThresholdTimeout));
-    motor.setNeutralMode(NeutralMode.Brake);
+    motor.setNeutralMode(NeutralMode.Coast);
     motor.configOpenloopRamp(0.15);
   }
 
   @Override
   public void periodic() {
-    // Update the odometry in the periodic block
-    m_odometry.update(
-        m_gyro.getRotation2d(), m_leftSensor.getIntegratedSensorPosition() * DriveConstants.kEncoderDistancePerPulse,
-        m_rightSensor.getIntegratedSensorPosition() * DriveConstants.kEncoderDistancePerPulse);
-    // SmartDashboard.putNumber("LEFT VOLTS", leftVolts);
-    // SmartDashboard.putNumber("RIGHT VOLTS", rightVolts);
-    SmartDashboard.putNumber("Heading", getHeading());
-    SmartDashboard.putNumber("L Wheel Speed",
-        getWheelSpeeds().leftMetersPerSecond);
-    SmartDashboard.putNumber("R Wheel Speed",
-        getWheelSpeeds().rightMetersPerSecond);
-    SmartDashboard.putNumber("Pose Rotation", getPose().getRotation().getDegrees());
-    SmartDashboard.putNumber("Turn Rate", getTurnRate());
-    SmartDashboard.putNumber("Left Encoder",
-        m_leftSensor.getIntegratedSensorPosition() * DriveConstants.kEncoderDistancePerPulse);
-    SmartDashboard.putNumber("Right Encoder",
-        m_rightSensor.getIntegratedSensorPosition() * DriveConstants.kEncoderDistancePerPulse);
-    // SmartDashboard.putString("Pose", getPose().toString());
-    SmartDashboard.putNumber("Gyro Rate", m_gyro.getRate());
-    SmartDashboard.putNumber("Gyro Angle", m_gyro.getAngle());
-    // SmartDashboard.putNumber("Gyro Rotation", m_gyro.getRotation2d());
-
-  }
-
-  /**
-   * Returns the currently-estimated pose of the robot.
-   *
-   * @return The pose.
-   */
-  public Pose2d getPose() {
-    return m_odometry.getPoseMeters();
+    SmartDashboard.putNumber("Left Drive sensor position", m_leftSensor.getIntegratedSensorPosition());
+    SmartDashboard.putNumber("Right Drive sensor position", m_rightSensor.getIntegratedSensorPosition());
+    
   }
 
   /**
@@ -141,14 +108,8 @@ public class DriveSubsystem extends SubsystemBase {
         m_rightSensor.getIntegratedSensorVelocity() * DriveConstants.kEncoderDistancePerPulse);
   }
 
-  /**
-   * Resets the odometry to the specified pose.
-   *
-   * @param pose The pose to which to set the odometry.
-   */
-  public void resetOdometry(Pose2d pose) {
-    resetEncoders();
-    m_odometry.resetPosition(pose, m_gyro.getRotation2d());
+  public double getWheelPosition() {
+    return ((m_leftSensor.getIntegratedSensorPosition() - m_rightSensor.getIntegratedSensorPosition()) / 2) * DriveConstants.kEncoderDistancePerPulse;
   }
 
   /**
@@ -183,6 +144,8 @@ public class DriveSubsystem extends SubsystemBase {
     m_leftSensor.setIntegratedSensorPosition(0.0, 0);
     m_rightSensor.setIntegratedSensorPosition(0.0, 0);
   }
+
+
 
   /**
    * Gets the average distance of the two encoders.
@@ -220,29 +183,6 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void setMaxOutput(double maxOutput) {
     m_drive.setMaxOutput(maxOutput);
-  }
-
-  /** Zeroes the heading of the robot. */
-  public void zeroHeading() {
-    m_gyro.reset();
-  }
-
-  /**
-   * Returns the heading of the robot.
-   *
-   * @return the robot's heading in degrees, from -180 to 180
-   */
-  public double getHeading() {
-    return m_gyro.getRotation2d().getDegrees();
-  }
-
-  /**
-   * Returns the turn rate of the robot.
-   *
-   * @return The turn rate of the robot, in degrees per second
-   */
-  public double getTurnRate() {
-    return m_gyro.getRate();
   }
 
   public static DriveSubsystem getInstance() {

@@ -83,9 +83,9 @@ public class Climber extends SubsystemBase {
       // None of the "expectecPosition" values are correct. They will need to be
       // determined experimentally
       public static enum RachelExtensionStates {
-            FULLY_RETRACTED(0),
-            GABE_HEIGHT(-3500),
-            FULLY_EXTENDED(150000),
+       //     FULLY_RETRACTED(0),
+            GABE_HEIGHT(0),
+            FULLY_EXTENDED(150100),
             TRUST_FALL_LOCATION(70000),
             RELEASE_REACH(25000),
             UNKNOWN(-100000),
@@ -165,8 +165,8 @@ public class Climber extends SubsystemBase {
         
             falcon.config_kF(0, 0.031, 0);
             falcon.config_kP(0, 0.2, 0);
-            falcon.config_kI(0, Constants.RACHEL_I, 0);
-            falcon.config_IntegralZone(0, 0);
+            falcon.config_kI(0, 0.2, 0);
+            falcon.config_IntegralZone(0, 1000);
 
             falcon.config_kF(1, 0.034, 0);
             falcon.config_kP(1, 0.06, 0);
@@ -179,9 +179,9 @@ public class Climber extends SubsystemBase {
             falcon.config_IntegralZone(2, 0);
 
             falcon.config_kF(3, 0.043, 0);
-            falcon.config_kP(3, 0.15, 0);
-            falcon.config_kI(3, Constants.RACHEL_I, 0);
-            falcon.config_IntegralZone(3, 0);
+            falcon.config_kP(3, 0.22, 0);
+            falcon.config_kI(3, 0.0, 0);
+            falcon.config_IntegralZone(3, 1000);
 
             falcon.configMotionCruiseVelocity(Constants.CLIMBER_MAX_VELOCITY);
             falcon.configMotionAcceleration(Constants.CLIMBER_MAX_VELOCITY / 2.0);
@@ -214,6 +214,16 @@ public class Climber extends SubsystemBase {
             }
 
             return RachelBarStates.UNKNOWN;
+      }
+
+      private void setRachelPIDSlot() {
+            if (rachelLeftBarSensor.get() && rachelRightBarSensor.get()) {
+                  leftRachelFalcon.selectProfileSlot(3, 0);
+                    rightRachelFalcon.selectProfileSlot(3, 0);
+            } else if (!rachelLeftBarSensor.get() && !rachelRightBarSensor.get()) {
+                  leftRachelFalcon.selectProfileSlot(1, 0);
+                  rightRachelFalcon.selectProfileSlot(1, 0);
+            }
       }
 
       private GabeStates getGabeState() {
@@ -395,7 +405,7 @@ public class Climber extends SubsystemBase {
                         switch (currentRachelBar) {
                               case NOT_REACHING_NO_BAR:
                                     switch (currentRachelExt) {
-                                          case FULLY_RETRACTED:
+                                          case GABE_HEIGHT:
                                                 currentState = ClimberState.STARTING_CONFIG;
                                                 break;
                                           default:
@@ -611,7 +621,7 @@ public class Climber extends SubsystemBase {
             }
             switch (newState) {
                   case STARTING_CONFIG:
-                        moveRachelPosition(RachelExtensionStates.FULLY_RETRACTED);
+                        moveRachelPosition(RachelExtensionStates.GABE_HEIGHT);
                         gabeClosed();
                         rachelNoReach();
                         break;
@@ -675,6 +685,7 @@ public class Climber extends SubsystemBase {
       @Override
       public void periodic() {
             stateMachineTwo();
+            setRachelPIDSlot();
             SmartDashboard.putString("Current State", getCurrentState().name());
             SmartDashboard.putString("Rachel Bar State", getRachelBarState().name());
             SmartDashboard.putString("Gabe Bar State", getGabeState().name());
