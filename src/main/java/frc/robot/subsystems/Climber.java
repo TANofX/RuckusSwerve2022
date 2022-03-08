@@ -84,10 +84,10 @@ public class Climber extends SubsystemBase {
       // determined experimentally
       public static enum RachelExtensionStates {
        //     FULLY_RETRACTED(0),
-            GABE_HEIGHT(0),
-            FULLY_EXTENDED(150100),
-            TRUST_FALL_LOCATION(70000),
-            RELEASE_REACH(25000),
+            GABE_HEIGHT(-2000),
+            FULLY_EXTENDED(170000),
+            TRUST_FALL_LOCATION(90000),
+            RELEASE_REACH(45000),
             UNKNOWN(-100000),
             EXTENDING(-100001),
             RETRACTING(-100002);
@@ -164,9 +164,9 @@ public class Climber extends SubsystemBase {
             falcon.selectProfileSlot(0,0);
         
             falcon.config_kF(0, 0.031, 0);
-            falcon.config_kP(0, 0.2, 0);
-            falcon.config_kI(0, 0.2, 0);
-            falcon.config_IntegralZone(0, 1000);
+            falcon.config_kP(0, 0.3, 0);
+            falcon.config_kI(0, 0.05, 0);
+            falcon.config_IntegralZone(0, 400);
 
             falcon.config_kF(1, 0.034, 0);
             falcon.config_kP(1, 0.06, 0);
@@ -184,7 +184,7 @@ public class Climber extends SubsystemBase {
             falcon.config_IntegralZone(3, 1000);
 
             falcon.configMotionCruiseVelocity(Constants.CLIMBER_MAX_VELOCITY);
-            falcon.configMotionAcceleration(Constants.CLIMBER_MAX_VELOCITY / 2.0);
+            falcon.configMotionAcceleration(Constants.CLIMBER_MAX_VELOCITY / 2);
 
             falcon.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0,0);
             
@@ -255,6 +255,9 @@ public class Climber extends SubsystemBase {
                   }
             }
 
+            if (isRachelBottomLimit()) {
+                  return RachelExtensionStates.GABE_HEIGHT;
+            }
             // Assume we are at a target position, because our velocity is small
             return RachelExtensionStates.findState(currentPosition);
       }
@@ -515,8 +518,8 @@ public class Climber extends SubsystemBase {
       }
 
       public void calibrateRachel() {
-            leftRachelFalcon.setSelectedSensorPosition(3000);
-            rightRachelFalcon.setSelectedSensorPosition(3000);
+            leftRachelFalcon.setSelectedSensorPosition(0);
+            rightRachelFalcon.setSelectedSensorPosition(0);
       }
 
       private void enableRachelSoftLimit(boolean enable) {

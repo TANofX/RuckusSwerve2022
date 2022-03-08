@@ -182,9 +182,10 @@ public class RobotContainer {
         new SetClimberState(ClimberState.T_REX_REACH),
         new SetClimberState(ClimberState.BRONTOSAURUS_REACHING),
         new SetClimberState(ClimberState.REACH_PULL),
-        new WaitCommand(1.0),
+        new WaitCommand(1.5),
         new SetClimberState(ClimberState.REACH_CAUGHT),
-        new SetClimberState(ClimberState.TRUST_FALL));
+        new SetClimberState(ClimberState.TRUST_FALL),
+        new InstantCommand(() -> Climber.getInstance().stopRachel(), Climber.getInstance()));
   }
 
   private Command getTraversalClimbCommand() {
@@ -195,17 +196,19 @@ public class RobotContainer {
         new SetClimberState(ClimberState.T_REX_REACH),
         new SetClimberState(ClimberState.BRONTOSAURUS_REACHING),
         new SetClimberState(ClimberState.REACH_PULL),
-        new WaitCommand(1.0),
+        new WaitCommand(1.5),
         new SetClimberState(ClimberState.REACH_CAUGHT),
         new SetClimberState(ClimberState.TRUST_FALL),
+        new WaitCommand(1.5),
         new SetClimberState(ClimberState.SUCCESSFULL_PULL_UP),
         new SetClimberState(ClimberState.SUCCESSFULL_HANG),
         new SetClimberState(ClimberState.T_REX_REACH),
         new SetClimberState(ClimberState.BRONTOSAURUS_REACHING),
         new SetClimberState(ClimberState.REACH_PULL),
-        new WaitCommand(1.0),
+        new WaitCommand(1.5),
         new SetClimberState(ClimberState.REACH_CAUGHT),
-        new SetClimberState(ClimberState.TRUST_FALL));
+        new SetClimberState(ClimberState.TRUST_FALL),
+        new InstantCommand(() -> Climber.getInstance().stopRachel(), Climber.getInstance()));
   }
 
   private Command getSimpleClimbCommand() {
