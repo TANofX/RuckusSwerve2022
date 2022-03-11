@@ -93,6 +93,7 @@ public class RobotContainer {
   private JoystickButton traversalXbox = new JoystickButton(m_xbox, XboxController.Button.kB.value);
   private JoystickButton toggleColorSensor = new JoystickButton(m_xbox, XboxController.Button.kBack.value);
   private JoystickButton simpleClimbXbox = new JoystickButton(m_xbox, XboxController.Button.kY.value);
+  private JoystickButton traversalFromHighStick = new JoystickButton(m_stick, Constants.FLIGHTSTICK_HIGH_TO_TRAVERSAL);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -151,6 +152,7 @@ public class RobotContainer {
     prepareClimbXbox.whenPressed(new SetClimberState(ClimberState.BABYS_FIRST_REACH));
     highBarXbox.whenPressed(getHighClimbCommand());
     traversalXbox.whenPressed(getTraversalClimbCommand());
+    traversalFromHighStick.whenPressed(getTransversalFromHighCommand());
     toggleColorSensor.whenPressed(new InstantCommand(() -> Intake.getInstance().toggleColorSensor()));
     simpleClimbXbox.whenPressed(getSimpleClimbCommand());
     // prepareClimbButton.whenPressed(new
@@ -186,6 +188,17 @@ public class RobotContainer {
         new SetClimberState(ClimberState.REACH_CAUGHT),
         new SetClimberState(ClimberState.TRUST_FALL),
         new InstantCommand(() -> Climber.getInstance().stopRachel(), Climber.getInstance()));
+  }
+
+  private Command getTransversalFromHighCommand() {
+    return new SequentialCommandGroup(
+      new SetClimberState(ClimberState.T_REX_REACH),
+      new SetClimberState(ClimberState.BRONTOSAURUS_REACHING),
+      new SetClimberState(ClimberState.REACH_PULL),
+      new WaitCommand(1.5),
+      new SetClimberState(ClimberState.REACH_CAUGHT),
+      new SetClimberState(ClimberState.TRUST_FALL),
+      new InstantCommand(() -> Climber.getInstance().stopRachel(), Climber.getInstance()));
   }
 
   private Command getTraversalClimbCommand() {

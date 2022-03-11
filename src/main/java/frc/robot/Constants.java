@@ -34,10 +34,12 @@ public final class Constants {
     public static final int FLIGHTSTICK_FULL_POWER_BUTTON = 6;
 
     // Climbing
+    public static final int FLIGHTSTICK_HIGH_TO_TRAVERSAL = 8;
     public static final int FLIGHTSTICK_GABE_PNEUMATICS_BUTTON = 9;
     public static final int FLIGHTSTICK_RACHEL_REACH_PNEUMATICS_BUTTON = 10;
     public static final int FLIGHTSTICK_LOCK_RACHEL_MOVE_JOYSTICK_BUTTON = 11;
     public static final int FLIGHTSTICK_CALIBRATE_CLIMBER_BUTTON = 12;
+
 
     public static final int MOVE_RACHEL_AXIS = 2;
 
@@ -45,6 +47,7 @@ public final class Constants {
     public static final HatSwitchButton.HatDirection FLIGHTSTICK_HAT_HIGH_BAR_CLIMB_DIRECTION = HatDirection.LEFT;
     public static final HatSwitchButton.HatDirection FLIGHTSTICK_HAT_TRAVERSAL_BAR_CLIMB_DIRECTION = HatDirection.RIGHT;
     public static final HatSwitchButton.HatDirection FLIGHTSTICK_HAT_SIMPLE_CLIMB_DIRECTION = HatDirection.DOWN;
+  
 
  //   public static  int CLIMB_TRAVERSAL_BAR = 10;
  //   public static  int CLIMB_HIGH_BAR = 8;

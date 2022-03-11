@@ -6,10 +6,10 @@ package frc.robot.subsystems;
 
 /** Add your docs here. */
 public enum ShooterSpeeds {
-LOWGOAL(7000),
-CLOSEHIGHGOAL(12000),
-FARHIGHGOAL(13000),
-LAUNCHPADGOAL(13500),
+LOWGOAL(8000), //7000
+CLOSEHIGHGOAL(12000),  
+FARHIGHGOAL(12500),
+LAUNCHPADGOAL(13000),
 OFF(0);
 
 private double actualSpeed;

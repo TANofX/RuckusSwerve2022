@@ -53,6 +53,9 @@ public class Climber extends SubsystemBase {
       private DigitalInput rachelLeftBarSensor;
       private DigitalInput rachelRightBarSensor;
 
+      private boolean leftRachelLimitLatch = false;
+      private boolean rightRachelLimitLatch = false;
+
       public static enum ClimberState {
             UNKNOWN,
             STARTING_CONFIG,
@@ -84,8 +87,9 @@ public class Climber extends SubsystemBase {
       // determined experimentally
       public static enum RachelExtensionStates {
        //     FULLY_RETRACTED(0),
-            GABE_HEIGHT(-2000),
-            FULLY_EXTENDED(170000),
+            GABE_HEIGHT(-5000),
+            FULLY_EXTENDED(190000),
+            MID_BAR_HEIGHT(170000),
             TRUST_FALL_LOCATION(90000),
             RELEASE_REACH(45000),
             UNKNOWN(-100000),
@@ -246,6 +250,9 @@ public class Climber extends SubsystemBase {
 
             double extensionState = Math.signum(currentVelocity);
 
+            if (isRachelBottomLimit()) {
+                  return RachelExtensionStates.GABE_HEIGHT;
+            }
             // Check to see if the arms are moving and return just a movement direction
             if (Math.abs(currentVelocity) > 10.0) {
                   if (extensionState > 0) {
@@ -255,9 +262,7 @@ public class Climber extends SubsystemBase {
                   }
             }
 
-            if (isRachelBottomLimit()) {
-                  return RachelExtensionStates.GABE_HEIGHT;
-            }
+           
             // Assume we are at a target position, because our velocity is small
             return RachelExtensionStates.findState(currentPosition);
       }
@@ -304,6 +309,13 @@ public class Climber extends SubsystemBase {
                                     }
                                     break;
                               case FULLY_EXTENDED:
+                                    switch (currentRachelBar) {
+                                          default:
+                                                currentState = ClimberState.UNKNOWN;
+                                                break;
+                                    }
+                                    break;
+                              case MID_BAR_HEIGHT:
                                     switch (currentRachelBar) {
                                           case NOT_REACHING_NO_BAR:
                                                 currentState = ClimberState.BABYS_FIRST_REACH;
@@ -562,11 +574,13 @@ public class Climber extends SubsystemBase {
       }
 
       public boolean isRachelBottomLimit() {
-            if ((rachelLeftCollection.isRevLimitSwitchClosed() == 1)
-                        && (rachelRightCollection.isRevLimitSwitchClosed() == 1)) {
-                  return true;
+            if (rachelLeftCollection.isRevLimitSwitchClosed() == 1){
+                  leftRachelLimitLatch = true;
             }
-            return false;
+            if (rachelRightCollection.isRevLimitSwitchClosed() == 1) {
+                  rightRachelLimitLatch =  true;
+            }
+            return leftRachelLimitLatch && rightRachelLimitLatch;
       }
 
       public void stopRachel() {
@@ -631,7 +645,7 @@ public class Climber extends SubsystemBase {
                   case REACHING:
                         throw new IllegalStateException();
                   case BABYS_FIRST_REACH:
-                        moveRachelPosition(RachelExtensionStates.FULLY_EXTENDED);
+                        moveRachelPosition(RachelExtensionStates.MID_BAR_HEIGHT);
                         gabeOpen();
                         rachelNoReach();
                         break;
@@ -689,6 +703,12 @@ public class Climber extends SubsystemBase {
       public void periodic() {
             stateMachineTwo();
             setRachelPIDSlot();
+
+            if (getRachelPosition() > 10) {
+                  leftRachelLimitLatch = false;
+                  rightRachelLimitLatch = false;
+            }
+
             SmartDashboard.putString("Current State", getCurrentState().name());
             SmartDashboard.putString("Rachel Bar State", getRachelBarState().name());
             SmartDashboard.putString("Gabe Bar State", getGabeState().name());
