@@ -35,6 +35,7 @@ public final class Constants {
 
     // Climbing
     public static final int FLIGHTSTICK_HIGH_TO_TRAVERSAL = 8;
+    public static final int XBOX_MID_TO_HIGH = 6;
     public static final int FLIGHTSTICK_GABE_PNEUMATICS_BUTTON = 9;
     public static final int FLIGHTSTICK_RACHEL_REACH_PNEUMATICS_BUTTON = 10;
     public static final int FLIGHTSTICK_LOCK_RACHEL_MOVE_JOYSTICK_BUTTON = 11;
@@ -93,7 +94,7 @@ public final class Constants {
     public static final double SHOOTER_THRESHOLD_TIMEOUT = 0.01;
     public static final double SHOOTER_F = 0.045; //0.04;
     public static final double SHOOTER_P = 0.125;
-    public static final double SHOOTER_I = 0.0005;//0.00125;
+    public static final double SHOOTER_I = 0.0010;//0.00125;
     public static final double SHOOTER_SPEED = 0.9;
     public static final double SHOOTER_SPIN_ERROR = 80;
     public static final int PRIMARY_SHOOTER_ID = 10;

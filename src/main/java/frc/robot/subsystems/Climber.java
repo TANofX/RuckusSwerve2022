@@ -705,8 +705,8 @@ public class Climber extends SubsystemBase {
             setRachelPIDSlot();
 
             if (getRachelPosition() > 10) {
-                  leftRachelLimitLatch = false;
-                  rightRachelLimitLatch = false;
+                  resetRachelLatch();
+                  
             }
 
             SmartDashboard.putString("Current State", getCurrentState().name());
@@ -717,6 +717,11 @@ public class Climber extends SubsystemBase {
             SmartDashboard.putNumber("Current Velocity", getRachelVelocity());
             SmartDashboard.putNumber("Current Rachel Position", getRachelPosition());
 
+      }
+
+      public void resetRachelLatch() {
+            leftRachelLimitLatch = false;
+            rightRachelLimitLatch = false;
       }
 
       public double getMaxVelicity() {

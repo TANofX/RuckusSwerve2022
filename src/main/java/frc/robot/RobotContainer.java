@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -94,7 +96,7 @@ public class RobotContainer {
   private JoystickButton toggleColorSensor = new JoystickButton(m_xbox, XboxController.Button.kBack.value);
   private JoystickButton simpleClimbXbox = new JoystickButton(m_xbox, XboxController.Button.kY.value);
   private JoystickButton traversalFromHighStick = new JoystickButton(m_stick, Constants.FLIGHTSTICK_HIGH_TO_TRAVERSAL);
-
+  private JoystickButton highFromMidXbox = new JoystickButton(m_xbox, Constants.XBOX_MID_TO_HIGH);
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -153,6 +155,7 @@ public class RobotContainer {
     highBarXbox.whenPressed(getHighClimbCommand());
     traversalXbox.whenPressed(getTraversalClimbCommand());
     traversalFromHighStick.whenPressed(getTransversalFromHighCommand());
+    highFromMidXbox.whenPressed(getHighFromMidCommand());
     toggleColorSensor.whenPressed(new InstantCommand(() -> Intake.getInstance().toggleColorSensor()));
     simpleClimbXbox.whenPressed(getSimpleClimbCommand());
     // prepareClimbButton.whenPressed(new
@@ -169,17 +172,22 @@ public class RobotContainer {
     // An ExampleCommand will run in autonomous
     return new SequentialCommandGroup( new CalibrateRobot(),
                                        new WaitCommand(1.0),
-                                       new CloseHighGoalShoot(),
+                                       new LaunchpadGoalShoot(),
                                        new ShootAll(),
                                        new WaitCommand(0.5),
-                                       new DriveXinches(90.0)
-    );
+                                       new ParallelDeadlineGroup(new SequentialCommandGroup(new WaitCommand(1.0), new DriveXinches(100.0)), new RunIntake()), 
+                                       new DriveXinches(-88),
+                                       new CloseHighGoalShoot(),
+                                       new ShootAll(),
+                                       new WaitCommand(0.5)
+                                       );
   }
 
   private Command getHighClimbCommand() {
     return new SequentialCommandGroup(
         new SetClimberState(ClimberState.BABYS_FIRST_REACH),
         new SetClimberState(ClimberState.SUCCESSFULL_PULL_UP),
+        new SetClimberState(ClimberState.SUCCESSFULL_HANG),
         new SetClimberState(ClimberState.SUCCESSFULL_HANG),
         new SetClimberState(ClimberState.T_REX_REACH),
         new SetClimberState(ClimberState.BRONTOSAURUS_REACHING),
@@ -191,6 +199,20 @@ public class RobotContainer {
   }
 
   private Command getTransversalFromHighCommand() {
+    return new SequentialCommandGroup(
+      new SetClimberState(ClimberState.SUCCESSFULL_PULL_UP),
+      new SetClimberState(ClimberState.SUCCESSFULL_HANG),
+      new SetClimberState(ClimberState.SUCCESSFULL_HANG),
+      new SetClimberState(ClimberState.T_REX_REACH),
+      new SetClimberState(ClimberState.BRONTOSAURUS_REACHING),
+      new SetClimberState(ClimberState.REACH_PULL),
+      new WaitCommand(1.5),
+      new SetClimberState(ClimberState.REACH_CAUGHT),
+      new SetClimberState(ClimberState.TRUST_FALL),
+      new InstantCommand(() -> Climber.getInstance().stopRachel(), Climber.getInstance()));
+  }
+
+  private Command getHighFromMidCommand() {
     return new SequentialCommandGroup(
       new SetClimberState(ClimberState.T_REX_REACH),
       new SetClimberState(ClimberState.BRONTOSAURUS_REACHING),
@@ -206,6 +228,7 @@ public class RobotContainer {
         new SetClimberState(ClimberState.BABYS_FIRST_REACH),
         new SetClimberState(ClimberState.SUCCESSFULL_PULL_UP),
         new SetClimberState(ClimberState.SUCCESSFULL_HANG),
+        new SetClimberState(ClimberState.SUCCESSFULL_HANG),
         new SetClimberState(ClimberState.T_REX_REACH),
         new SetClimberState(ClimberState.BRONTOSAURUS_REACHING),
         new SetClimberState(ClimberState.REACH_PULL),
@@ -214,6 +237,7 @@ public class RobotContainer {
         new SetClimberState(ClimberState.TRUST_FALL),
         new WaitCommand(1.5),
         new SetClimberState(ClimberState.SUCCESSFULL_PULL_UP),
+        new SetClimberState(ClimberState.SUCCESSFULL_HANG),
         new SetClimberState(ClimberState.SUCCESSFULL_HANG),
         new SetClimberState(ClimberState.T_REX_REACH),
         new SetClimberState(ClimberState.BRONTOSAURUS_REACHING),
@@ -228,6 +252,7 @@ public class RobotContainer {
     return new SequentialCommandGroup(
         new SetClimberState(ClimberState.BABYS_FIRST_REACH),
         new SetClimberState(ClimberState.SUCCESSFULL_PULL_UP),
+        new SetClimberState(ClimberState.SUCCESSFULL_HANG),
         new SetClimberState(ClimberState.SUCCESSFULL_HANG),
         new InstantCommand(() -> Climber.getInstance().stopRachel(), Climber.getInstance()));
   }

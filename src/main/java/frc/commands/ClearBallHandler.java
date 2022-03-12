@@ -27,7 +27,7 @@ public class ClearBallHandler extends CommandBase {
     clearTimer = new Timer();
     clearTimer.reset();
     clearTimer.start();
-    Shooter.getInstance().startShooter(ShooterSpeeds.LOWGOAL);
+    Shooter.getInstance().startShooter(ShooterSpeeds.LAUNCHPADGOAL);
     BallHandler.getInstance().moveTransitMotor(Constants.TRANSIT_MOTOR_SPEED);
   }
 
