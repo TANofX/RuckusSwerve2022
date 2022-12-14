@@ -4,12 +4,8 @@
 
 package frc.robot;
 
-import commands.CalibrateRobot;
-import commands.CancelClimber;
-import commands.MoveRachelWithJoystick;
-import commands.SetClimberState;
-import commands.ToggleGabeClaw;
-import commands.ToggleRachelReach;
+
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -23,14 +19,11 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.Climber.ClimberState;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.commands.ClearBallHandler;
 import frc.commands.CloseHighGoalShoot;
 import frc.commands.DefaultBallHandler;
-import frc.commands.DriveXinches;
 import frc.commands.FarHighGoalShoot;
 import frc.commands.LaunchpadGoalShoot;
 import frc.commands.LowGoalShoot;
@@ -39,8 +32,9 @@ import frc.commands.ShootAll;
 import frc.commands.ShootOne;
 import frc.commands.StopShooter;
 import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.DriveTime;
+import frc.robot.commands.RotateAngle;
 import frc.robot.subsystems.BallHandler;
-import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -79,7 +73,7 @@ public class RobotContainer {
 
   // final JoystickButton cancelClimber = new JoystickButton(m_stick,
   // Constants.CANCEL_CLIMBER);
-  // final JoystickButton calibrateClimber = new JoystickButton(m_stick, Constants.FLIGHTSTICK_CALIBRATE_CLIMBER_BUTTON);
+  final JoystickButton calibrateClimber = new JoystickButton(m_stick, Constants.FLIGHTSTICK_CALIBRATE_CLIMBER_BUTTON);
   // final JoystickButton lockRachelMoveJoystick = new JoystickButton(m_stick,
 //  Constants.FLIGHTSTICK_LOCK_RACHEL_MOVE_JOYSTICK_BUTTON);
 
@@ -99,6 +93,7 @@ public class RobotContainer {
   private JoystickButton simpleClimbXbox = new JoystickButton(m_xbox, XboxController.Button.kY.value);
   private JoystickButton traversalFromHighStick = new JoystickButton(m_stick, Constants.FLIGHTSTICK_HIGH_TO_TRAVERSAL);
   private JoystickButton highFromMidXbox = new JoystickButton(m_xbox, Constants.XBOX_MID_TO_HIGH);
+  private JoystickButton zeroGyro = new JoystickButton(m_xbox, 1);
 
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
 
@@ -122,9 +117,9 @@ public class RobotContainer {
     // Right stick X axis -> rotation
     m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
             m_drivetrainSubsystem,
-            () -> -modifyAxis(m_xbox.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_xbox.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_xbox.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
+            () -> -modifyAxis(m_xbox.getLeftY()) * (m_xbox.getLeftTriggerAxis() + 1) / 2.0 * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(m_xbox.getLeftX()) * (m_xbox.getLeftTriggerAxis() + 1) / 2.0  * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(m_xbox.getRightX()) * (m_xbox.getLeftTriggerAxis() + 1) / 2.0  * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
     ));
 
     configureButtonBindings();
@@ -139,14 +134,13 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    toggleGabe.whenPressed(new ToggleGabeClaw());
-    toggleRachel.whenPressed(new ToggleRachelReach());
+    
 
     // highClimb.whenPressed(getHighClimbCommand());
     // traversalClimb.whenPressed(getTraversalClimbCommand());
 
     // cancelClimber.whenPressed(new CancelClimber());
-    // calibrateClimber.whenPressed(new CalibrateRobot());
+    calibrateClimber.whenPressed(m_drivetrainSubsystem::zeroGyroscope);
     clearShooterXbox.whenPressed(new ClearBallHandler());
 
     // lockRachelMoveJoystick.whileHeld(new MoveRachelWithJoystick(Climber.getInstance(), m_stick));
@@ -159,6 +153,7 @@ public class RobotContainer {
     launchpadGoalShoot.whenPressed(new LaunchpadGoalShoot());
     shootOne.whenPressed(new ShootOne());
     shootAll.whenPressed(new ShootAll());
+    zeroGyro.whenPressed(new InstantCommand(() -> m_drivetrainSubsystem.zeroGyroscope()));
 
     runIntake.whileActiveContinuous(new RunIntake());
 
@@ -181,91 +176,19 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return new SequentialCommandGroup( new CalibrateRobot(),
+    return new SequentialCommandGroup( 
+                                       new InstantCommand(m_drivetrainSubsystem::zeroGyroscope),
                                        new WaitCommand(1.0),
+                                       new RotateAngle(m_drivetrainSubsystem, -66),
                                        new LaunchpadGoalShoot(),
                                        new ShootAll(),
                                        new WaitCommand(0.5),
-                                       new ParallelDeadlineGroup(new SequentialCommandGroup(new WaitCommand(1.0), new DriveXinches(100.0)), new RunIntake()), 
-                                       new DriveXinches(-88),
+                                       new ParallelDeadlineGroup(new SequentialCommandGroup(new WaitCommand(1.0), new DriveTime(m_drivetrainSubsystem, -.25, 0, 2)), new RunIntake()), 
                                        new CloseHighGoalShoot(),
+                                       new DriveTime(m_drivetrainSubsystem, .25, 0, 2),
                                        new ShootAll(),
                                        new WaitCommand(0.5)
                                        );
-  }
-
-  private Command getHighClimbCommand() {
-    return new SequentialCommandGroup(
-        new SetClimberState(ClimberState.BABYS_FIRST_REACH),
-        new SetClimberState(ClimberState.SUCCESSFULL_PULL_UP),
-        new SetClimberState(ClimberState.SUCCESSFULL_HANG),
-        new SetClimberState(ClimberState.SUCCESSFULL_HANG),
-        new SetClimberState(ClimberState.T_REX_REACH),
-        new SetClimberState(ClimberState.BRONTOSAURUS_REACHING),
-        new SetClimberState(ClimberState.REACH_PULL),
-        new WaitCommand(1.5),
-        new SetClimberState(ClimberState.REACH_CAUGHT),
-        new SetClimberState(ClimberState.TRUST_FALL),
-        new InstantCommand(() -> Climber.getInstance().stopRachel(), Climber.getInstance()));
-  }
-
-  private Command getTransversalFromHighCommand() {
-    return new SequentialCommandGroup(
-      new SetClimberState(ClimberState.SUCCESSFULL_PULL_UP),
-      new SetClimberState(ClimberState.SUCCESSFULL_HANG),
-      new SetClimberState(ClimberState.SUCCESSFULL_HANG),
-      new SetClimberState(ClimberState.T_REX_REACH),
-      new SetClimberState(ClimberState.BRONTOSAURUS_REACHING),
-      new SetClimberState(ClimberState.REACH_PULL),
-      new WaitCommand(1.5),
-      new SetClimberState(ClimberState.REACH_CAUGHT),
-      new SetClimberState(ClimberState.TRUST_FALL),
-      new InstantCommand(() -> Climber.getInstance().stopRachel(), Climber.getInstance()));
-  }
-
-  private Command getHighFromMidCommand() {
-    return new SequentialCommandGroup(
-      new SetClimberState(ClimberState.T_REX_REACH),
-      new SetClimberState(ClimberState.BRONTOSAURUS_REACHING),
-      new SetClimberState(ClimberState.REACH_PULL),
-      new WaitCommand(1.5),
-      new SetClimberState(ClimberState.REACH_CAUGHT),
-      new SetClimberState(ClimberState.TRUST_FALL),
-      new InstantCommand(() -> Climber.getInstance().stopRachel(), Climber.getInstance()));
-  }
-
-  private Command getTraversalClimbCommand() {
-    return new SequentialCommandGroup(
-        new SetClimberState(ClimberState.BABYS_FIRST_REACH),
-        new SetClimberState(ClimberState.SUCCESSFULL_PULL_UP),
-        new SetClimberState(ClimberState.SUCCESSFULL_HANG),
-        new SetClimberState(ClimberState.SUCCESSFULL_HANG),
-        new SetClimberState(ClimberState.T_REX_REACH),
-        new SetClimberState(ClimberState.BRONTOSAURUS_REACHING),
-        new SetClimberState(ClimberState.REACH_PULL),
-        new WaitCommand(1.5),
-        new SetClimberState(ClimberState.REACH_CAUGHT),
-        new SetClimberState(ClimberState.TRUST_FALL),
-        new WaitCommand(1.5),
-        new SetClimberState(ClimberState.SUCCESSFULL_PULL_UP),
-        new SetClimberState(ClimberState.SUCCESSFULL_HANG),
-        new SetClimberState(ClimberState.SUCCESSFULL_HANG),
-        new SetClimberState(ClimberState.T_REX_REACH),
-        new SetClimberState(ClimberState.BRONTOSAURUS_REACHING),
-        new SetClimberState(ClimberState.REACH_PULL),
-        new WaitCommand(1.5),
-        new SetClimberState(ClimberState.REACH_CAUGHT),
-        new SetClimberState(ClimberState.TRUST_FALL),
-        new InstantCommand(() -> Climber.getInstance().stopRachel(), Climber.getInstance()));
-  }
-
-  private Command getSimpleClimbCommand() {
-    return new SequentialCommandGroup(
-        new SetClimberState(ClimberState.BABYS_FIRST_REACH),
-        new SetClimberState(ClimberState.SUCCESSFULL_PULL_UP),
-        new SetClimberState(ClimberState.SUCCESSFULL_HANG),
-        new SetClimberState(ClimberState.SUCCESSFULL_HANG),
-        new InstantCommand(() -> Climber.getInstance().stopRachel(), Climber.getInstance()));
   }
 
   private static double deadband(double value, double deadband) {

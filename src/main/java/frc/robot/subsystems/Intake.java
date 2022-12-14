@@ -10,19 +10,26 @@ import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.ColorSensorV3.RawColor;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PneumaticsControlModule;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
+  /**
+   *
+   */
+  private static final int PCM_ID = 20;
   /** Creates a new Intake. */
   private CANSparkMax intakeMotor;
   private ColorSensorV3 colorSensor;
+  //private DoubleSolenoid solenoid;
   private Solenoid solenoid;
   private static Intake intakeInstance;
   private ColorMatch colorMatcher = new ColorMatch();
@@ -37,10 +44,9 @@ public class Intake extends SubsystemBase {
   private double[] rawColorArray = new double[4];
 
   public Intake() {
-    pcm = new PneumaticsControlModule(2);
-    solenoid = pcm.makeSolenoid(Constants.INTAKE_SOLENOID_PORT);
-    // solenoid = new Solenoid(PneumaticsModuleType.CTREPCM,
-    // Constants.INTAKE_SOLENOID_PORT);
+    pcm = new PneumaticsControlModule(PCM_ID);
+    solenoid = pcm.makeSolenoid(2);
+    //solenoid = pcm.makeDoubleSolenoid(Constants.INTAKE_SOLENOID_FORWARD, Constants.INTAKE_SOLENOID_REVERSE);
     colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
     colorMatcher.addColorMatch(blueTarget);
     colorMatcher.addColorMatch(redTarget);
@@ -130,12 +136,14 @@ public class Intake extends SubsystemBase {
 
   public void extendIntake() {
     intakeExtended = true;
-    solenoid.set(true);
+   // solenoid.set(Value.kForward);
+   solenoid.set(true);
   }
 
   public void retractIntake() {
     intakeExtended = false;
-    solenoid.set(false);
+   // solenoid.set(Value.kReverse);
+   solenoid.set(false);
   }
 
   public boolean isIntakeExtended() {

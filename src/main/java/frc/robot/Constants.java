@@ -90,35 +90,35 @@ public final class Constants {
      *
      * Should be measured from center to center.
      */
-    public static final double DRIVETRAIN_TRACKWIDTH_METERS = .6604; // FIXME Measure and set trackwidth
+    public static final double DRIVETRAIN_TRACKWIDTH_METERS = .5715; // .6604; // FIXME Measure and set trackwidth
     /**
      * The front-to-back distance between the drivetrain wheels.
      *
      * Should be measured from center to center.
      */
-    public static final double DRIVETRAIN_WHEELBASE_METERS = .6985; // FIXME Measure and set wheelbase
+    public static final double DRIVETRAIN_WHEELBASE_METERS = .6096; // .6985; // FIXME Measure and set wheelbase
 
     public static final int DRIVETRAIN_PIGEON_ID = 2; // FIXME Set Pigeon ID
 
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 7; // Falcon D                FIXME Set front left module drive motor ID
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 8; // Falcon E                FIXME Set front left module steer motor ID
     public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 13; // Encoder B          FIXME Set front left steer encoder ID
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(275.09765625); //  FIXME Measure and set front left steer offset
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(279.492); //  FIXME Measure and set front left steer offset
 
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 10; // Falcon G              FIXME Set front right drive motor ID
     public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 11; // Falcon H              FIXME Set front right steer motor ID
     public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 12; // Encoder A           FIXME Set front right steer encoder ID
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(231.6741943359); // FIXME Measure and set front right steer offset
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(230.977); // FIXME Measure and set front right steer offset
 
     public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 4; // Falcon A                FIXME Set back left drive motor ID
     public static final int BACK_LEFT_MODULE_STEER_MOTOR = 5; // Falcon B                 FIXME Set back left steer motor ID
     public static final int BACK_LEFT_MODULE_STEER_ENCODER = 14; // Encoder C             FIXME Set back left steer encoder ID
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(338.9007568359); //   FIXME Measure and set back left steer offset
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(337.676); //   FIXME Measure and set back left steer offset
 
     public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 6; // Falcon C                FIXME Set back right drive motor ID
     public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 9; // Falcon F                FIXME Set back right steer motor ID
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 15; // Encoder D            FIXME Set back right steer encoder ID
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(62); //  FIXME Measure and set back right steer offset
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(30.674); //  FIXME Measure and set back right steer offset
 
 
     // Shooter Constants
@@ -130,23 +130,25 @@ public final class Constants {
     public static final double SHOOTER_I = 0.0010;//0.00125;
     public static final double SHOOTER_SPEED = 0.9;
     public static final double SHOOTER_SPIN_ERROR = 80;
-    public static final int PRIMARY_SHOOTER_ID = 10;
-    public static final int SECONDARY_SHOOTER_ID = 11;
+    public static final int PRIMARY_SHOOTER_ID = 16;
+    public static final int SECONDARY_SHOOTER_ID = 17;
 
     // Cargo (Ball) Handler Constants
     public static final int HANDLERSENSOR_1_PORT = 0;
     public static final int HANDLERSENSOR_2_PORT = 1;
     public static final int HANDLERSENSOR_3_PORT = 2;
     public static final int HANDLERSENSOR_4_PORT = 3;
-    public static final int TRANSIT_MOTOR_ID = 8;
+    public static final int TRANSIT_MOTOR_ID = 18;
     public static final double TRANSIT_MOTOR_SPEED = -0.5;
     public static final double CLEAR_TIMEOUT = 2.0;
 
     // Intake Constants
-    public static final int INTAKE_SOLENOID_PORT = 0;
+    public static final int INTAKE_SOLENOID_FORWARD = 1;
+    public static final int INTAKE_SOLENOID_REVERSE = 0;
+
     public static final int DETECTABLE_DISTANCE = 250;
     public static final double REVERSE_INTAKE_TIMEOUT = 1.0;
-    public static final int INTAKE_MOTOR_ID = 9;
+    public static final int INTAKE_MOTOR_ID = 19;
     public static final double INTAKE_SPEED = 0.45;
 
     // Xbox Constants

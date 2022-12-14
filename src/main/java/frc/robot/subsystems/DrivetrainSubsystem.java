@@ -39,7 +39,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
    * <p>
    * This is a measure of how fast the robot should be able to drive in a straight line.
    */
-  public static final double MAX_VELOCITY_METERS_PER_SECOND = 6380.0 / 60.0 *
+  //public static final double MAX_VELOCITY_METERS_PER_SECOND = 6380.0 / 60.0 *
+  public static final double MAX_VELOCITY_METERS_PER_SECOND = 1500.0 / 60.0 *
           SdsModuleConfigurations.MK3_STANDARD.getDriveReduction() *
           SdsModuleConfigurations.MK3_STANDARD.getWheelDiameter() * Math.PI;
   /**
@@ -73,6 +74,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private final SwerveModule m_frontRightModule;
   private final SwerveModule m_backLeftModule;
   private final SwerveModule m_backRightModule;
+  private final SwerveModule swerveModules[];
 
   private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
@@ -130,6 +132,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
             BACK_RIGHT_MODULE_STEER_ENCODER,
             BACK_RIGHT_MODULE_STEER_OFFSET
     );
+        swerveModules = new SwerveModule[4];
+        swerveModules[0] = m_frontLeftModule;
+        swerveModules[1] = m_frontRightModule;
+        swerveModules[3] = m_backRightModule;
+        swerveModules[2] = m_backLeftModule;
   }
 
   /**
@@ -156,7 +163,17 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
+    SwerveModuleState[] currentStates = new SwerveModuleState[4];
+        for(int i=0;i<4;i++){
+          currentStates[i]=new SwerveModuleState(swerveModules[i].getDriveVelocity(), new Rotation2d(swerveModules[i].getSteerAngle()));
+          states[i]=SwerveModuleState.optimize(states[i], currentStates[i].angle);
+
+          if (states[i].speedMetersPerSecond == 0) {
+                states[i].angle = currentStates[i].angle;
+          }
+        } 
     SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
 
     m_frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[0].angle.getRadians());
@@ -164,4 +181,5 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[2].angle.getRadians());
     m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[3].angle.getRadians());
   }
+ 
 }
